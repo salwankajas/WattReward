@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "37394070573",
+    "project_id": "wattreward-88d0a",
+    "storage_bucket": "wattreward-88d0a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:37394070573:android:dde0d9964028d1f6cb0ca4",
+        "android_client_info": {
+          "package_name": "com.example.ev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "37394070573-n57nlcv59pesvfptu0kbljapn3gosica.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ev",
+            "certificate_hash": "66df9c4d0257bb40584bf586a6879da3740f4d16"
+          }
+        },
+        {
+          "client_id": "37394070573-9jb3msjbbs968vgk2li5mpjvr4vieigu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMNPGle1BkK0xGEqNjsjEpEX9Wu5zl-L4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "37394070573-9jb3msjbbs968vgk2li5mpjvr4vieigu.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "37394070573-8p9v73ak3sht1qf3kek0g7b160eiklig.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.ev"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

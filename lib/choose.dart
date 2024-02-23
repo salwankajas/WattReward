@@ -12,7 +12,7 @@ class Choose extends StatelessWidget {
           alignment: FractionalOffset.topCenter,
           child: Container(
             margin: EdgeInsets.only(
-                top: (MediaQuery.of(context).size.height / 100) * 5),
+                top: (MediaQuery.of(context).size.height / 100) * 16),
             height: 160,
             width: 320,
             decoration: BoxDecoration(
@@ -40,7 +40,7 @@ class Choose extends StatelessWidget {
           child: Text("Shop", style: TextStyle(fontWeight: FontWeight.w700)),
           onPressed: () => {
             Navigator.push(
-                context, MaterialPageRoute(builder: (context) => Shop()))
+                context, MaterialPageRoute(builder: (context) => User(todo: "shop")))
           },
         ),
         SizedBox(height: (MediaQuery.of(context).size.height / 100) * 1.5),
@@ -59,7 +59,7 @@ class Choose extends StatelessWidget {
           child: Text("User", style: TextStyle(fontWeight: FontWeight.w700)),
           onPressed: () => {
             Navigator.push(
-                context, MaterialPageRoute(builder: (context) => User()))
+                context, MaterialPageRoute(builder: (context) => User(todo: "user")))
           },
         ),
         Spacer(),
@@ -77,6 +77,15 @@ class Choose extends StatelessWidget {
               margin: EdgeInsets.symmetric(vertical: 20,horizontal: 4),
             ),
             // Second Circle
+            Container(
+              width: 10.0,
+              height: 10.0,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.grey,
+              ),
+              margin: EdgeInsets.symmetric(vertical: 20,horizontal: 4),
+            ),
             Container(
               width: 10.0,
               height: 10.0,

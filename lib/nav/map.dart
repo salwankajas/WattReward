@@ -2,16 +2,12 @@ import 'dart:convert';
 import 'package:location/location.dart' as loc;
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:ev/icons/current_loc.dart';
-import 'package:flutter/services.dart'; 
+import 'package:latlong2/latlong.dart';
 
-var pressed = 0;
-int preTime = DateTime.now().millisecondsSinceEpoch;
 
 Future<Position> _determinePosition() async {
   bool serviceEnabled;
@@ -65,22 +61,16 @@ Future<bool> _locationRequest() async {
   return ison;
 }
 
-class Home extends StatefulWidget {
+class Maps extends StatefulWidget {
   @override
-  _Navstate createState() => _Navstate();
+  _Maps createState() => _Maps();
 }
-class _Navstate extends State<Home> {
-  int _selectedIndex = 0;
+class _Maps extends State<Maps> {
+ 
   final ev_location = TextEditingController();
   late MapController _mapController = MapController();
   LatLng mapPos = LatLng(0, 0);
   List<LatLng> routePoints = [LatLng(9.853852, 76.947620)];
-
-  void _onItemTapped(int index) {
-  setState(() {
-    _selectedIndex = index;
-  });
-}
 
   @override
   void dispose() {
@@ -92,12 +82,7 @@ class _Navstate extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return 
-    PopScope(
-      canPop: false,
-      child:
-    Scaffold(
-      backgroundColor: Colors.white,
-      body: Stack(
+    Stack(
         children: [
           SizedBox(
             child: FlutterMap(
@@ -258,52 +243,10 @@ class _Navstate extends State<Home> {
                                 cursorColor: Colors.green,
                               ),
                             )
-                            // Text(
-                            //   "Search station",
-                            //   style: TextStyle(color: Colors.grey),
-                            // )
                           ],
                         ))),
               )),
         ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        unselectedItemColor: Colors.grey,
-        selectedItemColor: Colors.green,
-        backgroundColor: Colors.white,
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed,
-        iconSize: 20.0,
-        selectedFontSize: 12,
-        unselectedFontSize: 12,
-        // showUnselectedLabels: true,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Iconsax.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Iconsax.wallet), label: "Wallet"),
-          BottomNavigationBarItem(
-              icon: Icon(Iconsax.note), label: "Transaction"),
-          BottomNavigationBarItem(
-              icon: Icon(Iconsax.profile_2user), label: "Account",
-              )
-        ],
-      ),
-    ),
-     onPopInvoked: (bool didPop) async {
-    print("back");
-    pressed++;
-    int diff = DateTime.now().millisecondsSinceEpoch - preTime;
-    preTime = DateTime.now().millisecondsSinceEpoch;
-    print(diff);
-    if(diff <= 2000){
-      if(pressed >= 2 ){
-        pressed =0;
-        SystemNavigator.pop();
-      }
-    }else{
-      pressed = 0;
-    }
-  },
-    );
+      );
   }
 }

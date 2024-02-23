@@ -20,16 +20,6 @@ class _CurrentLocIconState extends State<CurrentLocIcon>
       begin: 30,
       end: 50,
     ).animate(animationController);
-//     animationController.addStatusListener((status) { 
-//   if(status == AnimationStatus.completed){
-//    Future.delayed(Duration(seconds: 10),(){
-//      if(mounted){
-//        animationController.forward(from: 0.0);
-//      }
-//    });
-//   }
-// });
-
     animationController.repeat(reverse: true);
     super.initState();
   }

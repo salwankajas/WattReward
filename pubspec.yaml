@@ -45,6 +45,10 @@ dependencies:
   http: ^1.2.0
   geolocator: ^11.0.0
   location: ^5.0.3
+  firebase_core: ^2.25.4
+  firebase_auth: ^4.17.4
+  cloud_firestore: ^4.15.5
+  google_sign_in: ^6.2.1
 
 dev_dependencies:
   flutter_test:
@@ -72,6 +76,8 @@ flutter:
   assets:
     - images/
     - images/icon/current_loc.png
+    - images/icon/google.png
+    - images/icon/phone.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

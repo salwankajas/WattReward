@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 class Shop extends StatelessWidget {
+  const Shop({super.key, required this.todo});
+  final String todo;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -9,7 +12,7 @@ class Shop extends StatelessWidget {
         Align(
           alignment: FractionalOffset.topCenter,
           child: Container(
-            margin: EdgeInsets.only(top: (MediaQuery.of(context).size.height/100)*5),
+            margin: EdgeInsets.only(top: (MediaQuery.of(context).size.height/100)*12),
             height: 180,
             width: 220,
             decoration: BoxDecoration(
@@ -28,7 +31,7 @@ class Shop extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30.0),
             ),
-            minimumSize: Size(300, 40),
+            minimumSize: Size(300, 50),
             textStyle: TextStyle(fontSize: 16),
             primary: Color.fromARGB(255, 99, 225, 103),
             side: BorderSide(
@@ -44,7 +47,7 @@ class Shop extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30.0),
             ),
-            minimumSize: Size(300, 40),
+            minimumSize: Size(300, 50),
             textStyle: TextStyle(fontSize: 16),
             primary: Color.fromARGB(255, 99, 225, 103),
             onPrimary: Colors.white,
@@ -69,6 +72,15 @@ class Shop extends StatelessWidget {
               margin: EdgeInsets.symmetric(vertical: 20,horizontal: 4),
             ),
             // Second Circle
+            Container(
+              width: 10.0,
+              height: 10.0,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.grey,
+              ),
+              margin: EdgeInsets.symmetric(vertical: 20,horizontal: 4),
+            ),
             Container(
               width: 10.0,
               height: 10.0,

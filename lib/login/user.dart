@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:ev/home.dart';
+import 'package:ev/login/signUp.dart';
 
 class User extends StatelessWidget {
+  const User({super.key, required this.todo});
+  final String todo;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -10,7 +13,7 @@ class User extends StatelessWidget {
         Align(
           alignment: FractionalOffset.topCenter,
           child: Container(
-            margin: EdgeInsets.only(top: (MediaQuery.of(context).size.height/100)*5),
+            margin: EdgeInsets.only(top: (MediaQuery.of(context).size.height/100)*12),
             height: 180,
             width: 220,
             decoration: BoxDecoration(
@@ -53,7 +56,7 @@ class User extends StatelessWidget {
             elevation: 4,
           ),
           child: Text("Sign Up",style: TextStyle(fontWeight:FontWeight.w600 ),),
-          onPressed: () => {},
+          onPressed: ()=>{Navigator.push(context, MaterialPageRoute(builder: (context)=>SignUp()))},
         ),
         Spacer(),
         Row(
@@ -76,6 +79,15 @@ class User extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.black,
+              ),
+              margin: EdgeInsets.symmetric(vertical: 20,horizontal: 4),
+            ),
+            Container(
+              width: 10.0,
+              height: 10.0,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.grey,
               ),
               margin: EdgeInsets.symmetric(vertical: 20,horizontal: 4),
             ),
