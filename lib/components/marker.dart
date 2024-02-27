@@ -6,12 +6,14 @@ import 'package:iconsax/iconsax.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:ev/util/currentLoc.dart';
 import 'package:ev/util/route.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 late var point;
 
 class CustomMarker {
   late LatLng points;
   late LatLng currPoints;
+  late String name;
   double? distance;
   List<LatLng>? routes;
   late BuildContext context;
@@ -20,12 +22,13 @@ class CustomMarker {
       streamControllers;
   PersistentBottomSheetController? controller;
   late StreamController<List<LatLng>> streamControllersRoutes;
-  CustomMarker(
+  CustomMarker(String name,
       LatLng point,
       GlobalKey<ScaffoldState> _scaffoldKey,
       StreamController<PersistentBottomSheetController<dynamic>?>
           streamControllers,
       StreamController<List<LatLng>> streamControllersRoutes) {
+        this.name = name;
     this.points = point;
     this._scaffoldKey = _scaffoldKey;
     this.streamControllers = streamControllers;
@@ -54,7 +57,7 @@ class CustomMarker {
             currPoints = LatLng(currLoc.latitude, currLoc.longitude);
             // print(currLoc);
             if (routes == null) {
-              (List<LatLng>,double) res = await getRoute(currPoints, points);
+              (List<LatLng>, double) res = await getRoute(currPoints, points);
               routes = res.$1;
               distance = res.$2;
             }
@@ -91,8 +94,15 @@ class CustomMarker {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(distance.toString()+ " m"),
-                              SizedBox(width: 80),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(name,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),),
+                                  Text((distance!/1000).toStringAsFixed(2) + "km"),
+                                ],
+                              ),
+                              SizedBox(width: 20),
                               Container(
                                   height: 50,
                                   width: 50,
@@ -102,7 +112,15 @@ class CustomMarker {
                                           98), // Set the border radius),
                                       child: InkWell(
                                         customBorder: new CircleBorder(),
-                                        onTap: () {},
+                                        onTap: () async {
+                                          var uri = Uri.parse(
+                                              "http://maps.google.com/maps?saddr=${currPoints.latitude},${currPoints.longitude},&daddr=${points.latitude},${points.longitude}'");
+                                          if (await canLaunchUrl(uri)) {
+                                            await launchUrl(uri);
+                                          } else {
+                                            throw 'Could not launch ${uri.toString()}';
+                                          }
+                                        },
                                         child: Center(
                                             child: const Icon(
                                           Iconsax.send_2,

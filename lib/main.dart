@@ -26,11 +26,11 @@ class MyApp extends StatelessWidget {
   late Widget firstWidget;
   @override
   Widget build(BuildContext context) {
-    // if(user != null){
+    if(user != null){
       firstWidget = Home();
-    // }else{
-    //   firstWidget = Choose();
-    // }
+    }else{
+      firstWidget = Choose();
+    }
     return MaterialApp(
       title: 'Flutter Map Example',
       home: firstWidget,

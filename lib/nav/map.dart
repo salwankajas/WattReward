@@ -55,11 +55,11 @@ class _Maps extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
   void initState() {
     super.initState();
     marker1 =
-        CustomMarker(LatLng(11.19899, 76.260804), _scaffoldKey,streamControllers,streamControllersRoutes);
+        CustomMarker("kajas",LatLng(11.19899, 76.260804), _scaffoldKey,streamControllers,streamControllersRoutes);
     marker2 =
-        CustomMarker(LatLng(11.199882, 76.260287), _scaffoldKey,streamControllers,streamControllersRoutes);
-    marker3 =CustomMarker(LatLng(9.853643, 76.947692), _scaffoldKey,streamControllers,streamControllersRoutes);
-    marker4 =CustomMarker(LatLng(9.853567, 76.946688), _scaffoldKey,streamControllers,streamControllersRoutes);
+        CustomMarker("Kajas",LatLng(11.199882, 76.260287), _scaffoldKey,streamControllers,streamControllersRoutes);
+    marker3 =CustomMarker("Desktop Solution Echarge",LatLng(9.853643, 76.947692), _scaffoldKey,streamControllers,streamControllersRoutes);
+    marker4 =CustomMarker("Parambans Echarge",LatLng(9.853567, 76.946688), _scaffoldKey,streamControllers,streamControllersRoutes);
     streamSubscription = streamControllers.stream.listen(
       (event) => (controller = event)
     );
@@ -94,8 +94,10 @@ class _Maps extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                 options: MapOptions(
                   initialCenter: initialMap,
                   onTap: (p, s) {
-                    routePoints=[];
                     _closeModalBottomSheet();
+                    setState(() {
+                      routePoints=[];
+                    });
                   },
                   onPositionChanged: (position, hasGesture) {
                     if (hasGesture) {
