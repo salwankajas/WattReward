@@ -7,7 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 
 
-class SignUp extends StatelessWidget {
+class SignIn extends StatelessWidget {
   final storage = new FlutterSecureStorage();
   @override
   Widget build(BuildContext context) {

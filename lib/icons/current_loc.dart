@@ -55,6 +55,7 @@ class _CurrentLocIconState extends State<CurrentLocIcon>
             "images/icon/current_loc.png",
             width: 40,
             height: 40,
+            color: Colors.green,
           ),
           onPressed: () {
             print("touched me");

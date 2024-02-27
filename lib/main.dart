@@ -19,17 +19,18 @@ void main() async{
   // print(_auth);
   runApp(MyApp());
 }
+// Color.fromARGB(255, 95, 190, 98)
 
 class MyApp extends StatelessWidget {
   final User? user = FirebaseAuth.instance!.currentUser;
   late Widget firstWidget;
   @override
   Widget build(BuildContext context) {
-    if(user != null){
+    // if(user != null){
       firstWidget = Home();
-    }else{
-      firstWidget = Choose();
-    }
+    // }else{
+    //   firstWidget = Choose();
+    // }
     return MaterialApp(
       title: 'Flutter Map Example',
       home: firstWidget,

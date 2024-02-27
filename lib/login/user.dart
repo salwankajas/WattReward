@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ev/home.dart';
 import 'package:ev/login/signUp.dart';
+import 'package:ev/login/signIn.dart';
 
 class User extends StatelessWidget {
   const User({super.key, required this.todo});
@@ -40,7 +41,7 @@ class User extends StatelessWidget {
             ),
           ),
           child: Text("Sign In",style: TextStyle(fontWeight:FontWeight.w600 )),
-          onPressed: ()=>{Navigator.push(context, MaterialPageRoute(builder: (context)=>Home()))}
+          onPressed: ()=>{Navigator.push(context, MaterialPageRoute(builder: (context)=>SignIn()))}
         ),
         SizedBox(height: (MediaQuery.of(context).size.height/100)*1.5),
         ElevatedButton(

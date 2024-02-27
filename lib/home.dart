@@ -4,11 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:ev/icons/current_loc.dart';
-import 'package:flutter/services.dart'; 
+import 'package:flutter/services.dart';
+import 'package:ev/nav/map.dart';
+import 'package:ev/nav/acc.dart';
 
 var pressed = 0;
 int preTime = DateTime.now().millisecondsSinceEpoch;
@@ -70,16 +71,25 @@ class Home extends StatefulWidget {
   _Navstate createState() => _Navstate();
 }
 class _Navstate extends State<Home> {
+  List<dynamic> _pages =<dynamic>[
+   Maps(),
+   Text("sdfsdf"),
+   Text("sdfsdf"),
+   Acc(),
+
+];
   int _selectedIndex = 0;
   final ev_location = TextEditingController();
   late MapController _mapController = MapController();
   LatLng mapPos = LatLng(0, 0);
   List<LatLng> routePoints = [LatLng(9.853852, 76.947620)];
+  final PageController _pageController = PageController();
 
   void _onItemTapped(int index) {
   setState(() {
     _selectedIndex = index;
   });
+  _pageController.jumpToPage(index);
 }
 
   @override
@@ -91,184 +101,32 @@ class _Navstate extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return 
+    return
     PopScope(
       canPop: false,
       child:
     Scaffold(
       backgroundColor: Colors.white,
-      body: Stack(
-        children: [
-          SizedBox(
-            child: FlutterMap(
-              options: MapOptions(
-                initialCenter: routePoints[0],
-                initialZoom: 18,
-                maxZoom: 20,
-              ),
-              mapController: _mapController,
-              children: [
-                TileLayer(
-                  urlTemplate:
-                      'https://api.maptiler.com/maps/dataviz/{z}/{x}/{y}.png?key=54GmtaBGPUmEcqpweB6n',
-                  userAgentPackageName: 'com.example.app',
-                ),
-                PolylineLayer(
-                  polylineCulling: false,
-                  polylines: [
-                    Polyline(
-                        points: routePoints,
-                        color: Colors.green,
-                        strokeWidth: 4)
-                  ],
-                ),
-                MarkerLayer(markers: [ 
-                  Marker(
-                      point: mapPos,
-                      height: 50,
-                      rotate: true,
-                      width: 50,
-                      child: Container(
-                        alignment: Alignment.center,
-                        child: const CurrentLocIcon()
-                      ))
-                ])
-              ],
-            ),
-          ),
-          Positioned(
-              bottom: 20,
-              right: 10,
-              child: Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.transparent,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.5),
-                        spreadRadius: 2,
-                        blurRadius: 4,
-                        offset:
-                            Offset(3, 4), // changes the position of the shadow
-                      ),
-                    ],
-                  ),
-                  child: Material(
-                      shape: CircleBorder(),
-                      color: Colors.white, // Set the border radius),
-                      child: InkWell(
-                        customBorder: new CircleBorder(),
-                        // splashColor: Colors.red,
-                        onTap: () async {
-                          print('Circle Clicked!');
-                          await _locationRequest();
-                          Position pos = await _determinePosition();
-                          mapPos = LatLng(pos.latitude, pos.longitude);
-                          _mapController.move(mapPos, 18.0);
-                          setState(() {
-                            
-                          });
-                        },
-                        child: Center(
-                            child: const Icon(
-                          Iconsax.gps,
-                          color: Colors.green,
-                          size: 28,
-                        )),
-                      )))),
-          Positioned(
-              width: MediaQuery.of(context).size.width,
-              top: 50,
-              child: Align(
-                alignment: Alignment.center,
-                child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 0),
-                    child: Container(
-                        width: 330,
-                        height: 50,
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.3),
-                                spreadRadius: 2,
-                                blurRadius: 4,
-                                offset: Offset(0, 2),
-                              )
-                            ],
-                            border: Border.all(color: Colors.green)),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Iconsax.search_normal,
-                              color: Colors.green,
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Expanded(
-                              child: TextField(
-                                textInputAction: TextInputAction.search,
-                                onSubmitted: (value) async {
-                                  var v1 = 9.852323109271987;
-                                  var v2 = 76.94904472504429;
-                                  var v3 = 9.853305886649755;
-                                  var v4 = 76.94684982163658;
-
-                                  var url = Uri.parse(
-                                      "http://router.project-osrm.org/route/v1/driving/$v2,$v1;$v4,$v3?steps=true&annotations=true&geometries=geojson&overview=full");
-                                  // var url = Uri.parse("https://routing.openstreetmap.de/routed-car/route/v1/driving/$v2,$v1;$v4,$v3?overview=false&geometries=geojson&steps=true&hints=NwaPgcdQFIMrAAAAAAAAAAABAACTAAAAXcigQgAAAACExfJDPBOKQysAAAAAAAAAAAEAAJMAAAAmOwAAvGaWBNaZlgC8ZpYE1pmWABYAnwBH1g1v%3BueiRiMHokYgFAAAAAQAAAAUAAAAEAAAA0JInQaBAmD8WiA1BIKflQAUAAAABAAAABQAAAAQAAAAmOwAAoF2WBAJolgDZXZYEtWeWAAEAXwNH1g1v");
-                                  var response = await http.get(url);
-                                  print(response.body);
-                                  setState(() {
-                                    routePoints = [];
-                                    var ruter =
-                                        jsonDecode(response.body)['routes'][0]
-                                            ['geometry']['coordinates'];
-                                    print(ruter);
-                                    for (int i = 0; i < ruter.length; i++) {
-                                      var rep = ruter[i].toString();
-                                      rep = rep.replaceAll("[", "");
-                                      rep = rep.replaceAll("]", "");
-                                      var lat1 = rep.split(", ");
-                                      // print(lat1);
-                                      // var long1 = rep.split(',');
-                                      routePoints.add(LatLng(
-                                          double.parse(lat1[1]),
-                                          double.parse(lat1[0])));
-                                    }
-                                    // print(response);
-                                    // print(ruter);
-                                    _mapController.move(routePoints[0], 18.0);
-                                    print(routePoints);
-                                  });
-
-                                  // print(response.body);
-                                },
-                                keyboardType: TextInputType.text,
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: 'Search stations',
-                                ),
-                                style: TextStyle(color: Colors.black),
-                                cursorColor: Colors.green,
-                              ),
-                            )
-                            // Text(
-                            //   "Search station",
-                            //   style: TextStyle(color: Colors.grey),
-                            // )
-                          ],
-                        ))),
-              )),
+      body:
+      PageView(
+        controller: _pageController,
+        children: <Widget>[
+          Maps(),
+          Text("sdfsdf"),
+          Text("sdfsdf"),
+          Acc(),
         ],
-      ),
+        onPageChanged: (pages) {
+          setState(() {
+            _selectedIndex = pages;
+          });
+        },
+      )
+      // _pages.elementAt(_selectedIndex)
+      // Maps()
+      ,
       bottomNavigationBar: BottomNavigationBar(
-        unselectedItemColor: Colors.grey,
+        unselectedItemColor: const Color.fromARGB(255, 118, 118, 118),
         selectedItemColor: Colors.green,
         backgroundColor: Colors.white,
         currentIndex: _selectedIndex,
