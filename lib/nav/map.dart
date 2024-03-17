@@ -28,7 +28,7 @@ class _Maps extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
   late double _markerSize;
   final streamControllers = StreamController<PersistentBottomSheetController?>();
   final streamControllersRoutes = StreamController<List<LatLng>>();
-  late StreamSubscription<PersistentBottomSheetController<dynamic>?> streamSubscription;
+  late StreamSubscription<PersistentBottomSheetController?> streamSubscription;
   late StreamSubscription<List<LatLng>> streamSubscriptionRoutes;
   late final CustomMarker marker1;
   late final CustomMarker marker2;

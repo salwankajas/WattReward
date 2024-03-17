@@ -52,7 +52,7 @@ class _CurrentLocIconState extends State<CurrentLocIcon>
         height: 50,
         child: IconButton(
           icon: Image.asset(
-            "images/icon/current_loc.png",
+            "assets/images/icon/current_loc.png",
             width: 40,
             height: 40,
             color: Colors.green,

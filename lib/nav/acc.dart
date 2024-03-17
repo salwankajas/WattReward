@@ -60,7 +60,7 @@ class _Acc extends State<Acc> {
                     height: 120.0,
                     child: Center(
                         child: Image.asset(
-                      "images/avatar1.jpg",
+                      "assets/images/avatar1.jpg",
                       width: 120,
                       height: 120,
                     )),

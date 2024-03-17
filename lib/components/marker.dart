@@ -18,14 +18,14 @@ class CustomMarker {
   List<LatLng>? routes;
   late BuildContext context;
   late GlobalKey<ScaffoldState> _scaffoldKey;
-  late StreamController<PersistentBottomSheetController<dynamic>?>
+  late StreamController<PersistentBottomSheetController?>
       streamControllers;
   PersistentBottomSheetController? controller;
   late StreamController<List<LatLng>> streamControllersRoutes;
   CustomMarker(String name,
       LatLng point,
       GlobalKey<ScaffoldState> _scaffoldKey,
-      StreamController<PersistentBottomSheetController<dynamic>?>
+      StreamController<PersistentBottomSheetController?>
           streamControllers,
       StreamController<List<LatLng>> streamControllersRoutes) {
         this.name = name;
@@ -48,11 +48,12 @@ class CustomMarker {
         alignment: Alignment.center,
         child: IconButton(
           icon: Image.asset(
-            "images/icon/ev_location.png",
+            "assets/images/icon/ev_location.png",
             width: _marker,
             height: _marker,
           ),
           onPressed: () async {
+            await locationRequest();
             Position currLoc = await determinePosition();
             currPoints = LatLng(currLoc.latitude, currLoc.longitude);
             // print(currLoc);

@@ -1,7 +1,7 @@
 flutter_native_splash:
   color: "#ffffff"
-  image: images/wattReward2.png
+  image: assets/images/wattReward2.png
   android_12: 
-    image: images/wattReward2.png
+    image: assets/images/wattReward2.png
   android: true
   ios: true

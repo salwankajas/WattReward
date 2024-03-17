@@ -10,7 +10,7 @@ import 'package:ev/icons/current_loc.dart';
 import 'package:flutter/services.dart';
 import 'package:ev/nav/map.dart';
 import 'package:ev/nav/acc.dart';
-import 'package:ev/nav/wallet.dart';
+import 'package:ev/nav/reward.dart';
 
 var pressed = 0;
 int preTime = DateTime.now().millisecondsSinceEpoch;
@@ -67,16 +67,12 @@ Future<bool> _locationRequest() async {
   return ison;
 }
 
-class Home extends StatefulWidget {
+class ShopNav extends StatefulWidget {
   @override
-  _Navstate createState() => _Navstate();
+  _ShopNav createState() => _ShopNav();
 }
-class _Navstate extends State<Home> {
+class _ShopNav extends State<ShopNav> {
   int _selectedIndex = 0;
-  final ev_location = TextEditingController();
-  late MapController _mapController = MapController();
-  LatLng mapPos = LatLng(0, 0);
-  List<LatLng> routePoints = [LatLng(9.853852, 76.947620)];
   final PageController _pageController = PageController();
 
   void _onItemTapped(int index) {
@@ -89,7 +85,6 @@ class _Navstate extends State<Home> {
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
-    ev_location.dispose();
     super.dispose();
   }
 
@@ -105,8 +100,8 @@ class _Navstate extends State<Home> {
       PageView(
         controller: _pageController,
         children: <Widget>[
-          Maps(),
-          Wallet(),
+          Reward(),
+          Text("sdfsdf"),
           Text("sdfsdf"),
           Acc(),
         ],
@@ -131,8 +126,8 @@ class _Navstate extends State<Home> {
         unselectedFontSize: 12,
         // showUnselectedLabels: true,
         items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Iconsax.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Iconsax.wallet), label: "Wallet"),
+          BottomNavigationBarItem(icon: Icon(Iconsax.money_send), label: "Reward"),
+          BottomNavigationBarItem(icon: Icon(Iconsax.transaction_minus), label: "Offers"),
           BottomNavigationBarItem(
               icon: Icon(Iconsax.note), label: "Transaction"),
           BottomNavigationBarItem(
