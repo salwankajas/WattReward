@@ -32,7 +32,7 @@ Future<void> addWallet(
       .catchError((error) => print("Failed to add user: $error"));
 }
 
-Future<DocumentSnapshot<Object?>> readUser(String id) {
-  CollectionReference users = FirebaseFirestore.instance.collection("user");
+Future<DocumentSnapshot<Object?>> readDB(Entity entity,String id) {
+  CollectionReference users = FirebaseFirestore.instance.collection(entity.value);
   return users.doc(id).get();
 }

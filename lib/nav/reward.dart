@@ -1,14 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ev/util/enum.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:ev/util/wallet_creation.dart';
 import 'package:ev/util/database.dart';
-import 'package:web3dart/web3dart.dart';
-import 'package:http/http.dart';
 import 'package:ev/util/qrScan.dart';
+import 'package:ev/util/cryptoTrans.dart';
+import 'package:web3dart/web3dart.dart';
 
 final storage = new FlutterSecureStorage();
 
@@ -18,15 +17,15 @@ class Reward extends StatefulWidget {
 }
 
 class _Reward extends State<Reward> with AutomaticKeepAliveClientMixin<Reward> {
-  late Client httpClient;
-  late Web3Client ethClient;
+  late CryptoTrans cryptoTrans;
+  var event;
   int? selected;
   String? publicAddress;
   String? privateAddress;
   bool isWallet = false;
   bool clicked = false;
   Color clr = Colors.black;
-  double balance = 0;
+  int balance = 0;
 
   @override
   void dispose() {
@@ -36,10 +35,7 @@ class _Reward extends State<Reward> with AutomaticKeepAliveClientMixin<Reward> {
 
   @override
   void initState() {
-    httpClient = Client();
-    ethClient = Web3Client(
-        "https://polygon-mumbai.g.alchemy.com/v2/yGX6D3Chr52l2FIkF5YQ3THPPMVaWECk",
-        httpClient);
+    cryptoTrans = CryptoTrans("shop");
     super.initState();
 
     // print(name);
@@ -52,16 +48,24 @@ class _Reward extends State<Reward> with AutomaticKeepAliveClientMixin<Reward> {
       var res = await storage.read(key: "isWallet");
       if (res == null) {
         String? id = await storage.read(key: "id");
-        DocumentSnapshot<Object?> data = await readUser(id!);
+        DocumentSnapshot<Object?> data = await readDB(Entity.shop, id!);
         Map<String, dynamic> datas = data!.data() as Map<String, dynamic>;
         isWallet = data["wallet"];
         if (isWallet) {
           privateAddress = data["privateKey"];
           await storage.write(key: "privateKey", value: privateAddress);
           publicAddress = data["publicKey"];
-          await storage.write(key: "privateKey", value: publicAddress);
+          await storage.write(key: "publicKey", value: publicAddress);
           await storage.write(key: "isWallet", value: "true");
-          getBalance(EthPrivateKey.fromHex(privateAddress!).address);
+          cryptoTrans.publicAddress = EthereumAddress.fromHex(publicAddress!);
+          balance = await cryptoTrans
+              .getBalance(EthereumAddress.fromHex(publicAddress!));
+          event = cryptoTrans.loadEvent();
+          event.listen((e) async {
+            balance = await cryptoTrans
+              .getBalance(EthereumAddress.fromHex(publicAddress!));
+            setState(() {});
+          });
           return true;
         } else {
           return false;
@@ -72,35 +76,6 @@ class _Reward extends State<Reward> with AutomaticKeepAliveClientMixin<Reward> {
         return false;
       }
     }
-  }
-
-  Future<DeployedContract> loadContract() async {
-    String abi = await rootBundle.loadString("assets/abi/abi.json");
-    String contractAddress = "0x965b9ca7dd9ec22ff615a156b731e97b7baf9da1";
-    final contract = DeployedContract(ContractAbi.fromJson(abi, "EVCoin"),
-        EthereumAddress.fromHex(contractAddress));
-    return contract;
-  }
-
-  Future<List<dynamic>> query(String functionName, List<dynamic> args) async {
-    try {
-      final contract = await loadContract();
-      final ethFunction = contract.function(functionName);
-      final result = await ethClient.call(
-          contract: contract, function: ethFunction, params: args);
-      return result;
-    } catch (error, trace) {
-      print(error);
-      return [];
-    }
-  }
-
-  Future<void> getBalance(EthereumAddress credentialAddress) async {
-    List<dynamic> result = await query("balanceOf", [credentialAddress]);
-    BigInt data = result[0];
-    setState(() {
-      balance = data.toDouble();
-    });
   }
 
   @override
@@ -124,7 +99,7 @@ class _Reward extends State<Reward> with AutomaticKeepAliveClientMixin<Reward> {
                   SizedBox(height: 10),
                   Container(
                     child: Text(
-                      balance.toStringAsFixed(2) + " EVCN",
+                      balance.toString() + " EVCN",
                       style: TextStyle(fontSize: 28),
                     ),
                   ),
@@ -140,29 +115,33 @@ class _Reward extends State<Reward> with AutomaticKeepAliveClientMixin<Reward> {
                         setState(() {
                           clr = Colors.green;
                         });
-                        Future.delayed(const Duration(milliseconds: 200)).then((val) {
+                        Future.delayed(const Duration(milliseconds: 200))
+                            .then((val) {
                           setState(() {
                             clr = Colors.black;
                           });
                         });
                       },
                       onTap: () => {
-                        Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => QRCodeScannerApp()))
-
-                      },
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => QRCodeScannerApp()))
+                          },
                       child: Container(
-                        width: 100,
-                        height: 100,
-                        alignment: Alignment.center,
-                        color: Colors.transparent,
+                          width: 100,
+                          height: 100,
+                          alignment: Alignment.center,
+                          color: Colors.transparent,
                           child: Column(
                             children: [
                               Icon(
                                 Iconsax.scan_barcode,
                                 color: clr,
                               ),
-                              SizedBox(height: 5,),
+                              SizedBox(
+                                height: 5,
+                              ),
                               Text(
                                 "Scan QR Code",
                                 style: TextStyle(
@@ -215,7 +194,7 @@ class _Reward extends State<Reward> with AutomaticKeepAliveClientMixin<Reward> {
                                     key: "privateKey", value: privateAddress);
                                 await storage.write(
                                     key: "privateKey", value: publicAddress);
-                                addWallet(id!, Entity.user, privateAddress!,
+                                addWallet(id!, Entity.shop, privateAddress!,
                                     publicAddress!);
                                 setState(() {});
                               }

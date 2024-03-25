@@ -202,6 +202,40 @@ class _Maps extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                           )),
                         )))),
             Positioned(
+                bottom: 80,
+                right: 10,
+                child: Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.transparent,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 2,
+                          blurRadius: 4,
+                          offset: Offset(
+                              3, 4), // changes the position of the shadow
+                        ),
+                      ],
+                    ),
+                    child: Material(
+                        shape: CircleBorder(),
+                        color: Colors.white ,// Set the border radius),
+                        child: InkWell(
+                          customBorder: new CircleBorder(),
+                          onTap: () {
+                          },
+                          child: Center(
+                              child: const Icon(
+                            Iconsax.scan_barcode,
+                            color: Color.fromARGB(
+                            255, 95, 190, 98),
+                            size: 26,
+                          )),
+                        )))),
+            Positioned(
                 width: MediaQuery.of(context).size.width,
                 top: 50,
                 child: Align(

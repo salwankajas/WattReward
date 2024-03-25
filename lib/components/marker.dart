@@ -18,17 +18,16 @@ class CustomMarker {
   List<LatLng>? routes;
   late BuildContext context;
   late GlobalKey<ScaffoldState> _scaffoldKey;
-  late StreamController<PersistentBottomSheetController?>
-      streamControllers;
+  late StreamController<PersistentBottomSheetController?> streamControllers;
   PersistentBottomSheetController? controller;
   late StreamController<List<LatLng>> streamControllersRoutes;
-  CustomMarker(String name,
+  CustomMarker(
+      String name,
       LatLng point,
       GlobalKey<ScaffoldState> _scaffoldKey,
-      StreamController<PersistentBottomSheetController?>
-          streamControllers,
+      StreamController<PersistentBottomSheetController?> streamControllers,
       StreamController<List<LatLng>> streamControllersRoutes) {
-        this.name = name;
+    this.name = name;
     this.points = point;
     this._scaffoldKey = _scaffoldKey;
     this.streamControllers = streamControllers;
@@ -72,10 +71,11 @@ class CustomMarker {
                 padding: EdgeInsets.all(8.0),
                 color: Colors.transparent,
                 width: MediaQuery.of(context).size.width - 30,
-                height: 220,
+                height: 240,
                 child: Container(
                     padding: const EdgeInsets.all(8.0),
                     width: MediaQuery.of(context).size.width - 30,
+                    alignment: Alignment.center,
                     height: 220,
                     decoration: BoxDecoration(
                         color: Colors.white,
@@ -91,16 +91,63 @@ class CustomMarker {
                       children: [
                         Container(
                           height: 80,
+                          // color: Colors.red,
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom:
+                                  BorderSide(width: 0.8, color: Colors.grey.withOpacity(0.5)),
+                            ),
+                          ),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
+                              SizedBox(
+                                width: 20,
+                              ),
                               Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Text(name,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),),
-                                  Text((distance!/1000).toStringAsFixed(2) + "km"),
+                                  Text(
+                                    name,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16),
+                                  ),
+                                  SizedBox(
+                                    height: 14,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Iconsax.location,
+                                            size: 16,
+                                          ),
+                                          SizedBox(width: 4),
+                                          Text((distance! / 1000)
+                                                  .toStringAsFixed(2) +
+                                              "km"),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        width: 18,
+                                      ),
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Iconsax.car,
+                                            size: 16,
+                                          ),
+                                          SizedBox(width: 4),
+                                          Text(
+                                              "${Duration(minutes: (((distance! / 1000) / 50) * 60).ceil()).inMinutes}min"),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ],
                               ),
                               SizedBox(width: 20),
@@ -128,10 +175,60 @@ class CustomMarker {
                                           color: Colors.white,
                                           size: 32,
                                         )),
-                                      )))
+                                      ))),
+                              SizedBox(
+                                width: 10,
+                              )
                             ],
                           ),
-                        )
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(child: Container()),
+                            Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Text(
+                                "3 Chargers",
+                                textAlign: TextAlign.right,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                    color: Colors.green),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: 60,
+                            padding: const EdgeInsets.all(12.0),
+                            decoration: BoxDecoration(
+                              border: Border(
+                                top: BorderSide(width: 0.8, color: Colors.grey.withOpacity(0.5)),
+                              ),
+                            ),
+                            child: Container(
+                              margin: EdgeInsets.symmetric(horizontal: 80),
+                              child: OutlinedButton(
+                                style: OutlinedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30.0),
+                                  ),
+                                  minimumSize: Size(300, 80),
+                                  textStyle: TextStyle(fontSize: 14),
+                                  foregroundColor:
+                                      Colors.green,
+                                  side: BorderSide(
+                                      color: Colors.green),
+                                ),
+                                child: Text("View",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.w700)),
+                                onPressed: () => {},
+                              ),
+                            )),
                       ],
                     )),
               );

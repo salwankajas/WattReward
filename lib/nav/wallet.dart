@@ -7,8 +7,10 @@ import 'package:iconsax/iconsax.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:ev/util/wallet_creation.dart';
 import 'package:ev/util/database.dart';
+import 'package:web3dart/crypto.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:http/http.dart';
+import 'package:ev/util/cryptoTrans.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:ev/util/qrGenerate.dart';
 
@@ -21,6 +23,8 @@ class Wallet extends StatefulWidget {
 
 class _Wallet extends State<Wallet> with AutomaticKeepAliveClientMixin<Wallet> {
   late Client httpClient;
+  late CryptoTrans cryptoTrans;
+  late Stream<FilterEvent> event;
   late Web3Client ethClient;
   int? selected;
   String? publicAddress;
@@ -30,7 +34,7 @@ class _Wallet extends State<Wallet> with AutomaticKeepAliveClientMixin<Wallet> {
   bool clicked = false;
   Color clr = Colors.black;
   Color clr1 = Colors.black;
-  double balance = 0;
+  int balance = 0;
 
   @override
   void dispose() {
@@ -40,10 +44,7 @@ class _Wallet extends State<Wallet> with AutomaticKeepAliveClientMixin<Wallet> {
 
   @override
   void initState() {
-    httpClient = Client();
-    ethClient = Web3Client(
-        "https://polygon-mumbai.g.alchemy.com/v2/yGX6D3Chr52l2FIkF5YQ3THPPMVaWECk",
-        httpClient);
+    cryptoTrans = CryptoTrans();
     super.initState();
 
     // print(name);
@@ -54,10 +55,10 @@ class _Wallet extends State<Wallet> with AutomaticKeepAliveClientMixin<Wallet> {
       return true;
     } else {
       var res = await storage.read(key: "isWallet");
-      var ress;
-      if (ress == null) {
+      // var ress;
+      if (res == null) {
         String? id = await storage.read(key: "id");
-        DocumentSnapshot<Object?> data = await readUser(id!);
+        DocumentSnapshot<Object?> data = await readDB(Entity.user, id!);
         Map<String, dynamic> datas = data!.data() as Map<String, dynamic>;
         isWallet = data["wallet"];
         if (isWallet) {
@@ -69,12 +70,20 @@ class _Wallet extends State<Wallet> with AutomaticKeepAliveClientMixin<Wallet> {
           name = data["name"];
           await storage.write(key: "name", value: name);
           await storage.write(key: "isWallet", value: "true");
-          getBalance(EthPrivateKey.fromHex(privateAddress!).address);
+          cryptoTrans.publicAddress = EthereumAddress.fromHex(publicAddress!);
+          balance = await cryptoTrans
+              .getBalance(EthereumAddress.fromHex(publicAddress!));
+          event = cryptoTrans.loadEvent();
+          event.listen((e) async {
+            balance = await cryptoTrans
+              .getBalance(EthereumAddress.fromHex(publicAddress!));
+            setState(() {});
+          });
           return true;
         } else {
           return false;
         }
-      } else if (ress == "true") {
+      } else if (res == "true") {
         privateAddress = await storage.read(key: "privateKey");
         publicAddress = await storage.read(key: "publicKey");
         name = await storage.read(key: "name");
@@ -83,35 +92,6 @@ class _Wallet extends State<Wallet> with AutomaticKeepAliveClientMixin<Wallet> {
         return false;
       }
     }
-  }
-
-  Future<DeployedContract> loadContract() async {
-    String abi = await rootBundle.loadString("assets/abi/abi.json");
-    String contractAddress = "0x965b9ca7dd9ec22ff615a156b731e97b7baf9da1";
-    final contract = DeployedContract(ContractAbi.fromJson(abi, "EVCoin"),
-        EthereumAddress.fromHex(contractAddress));
-    return contract;
-  }
-
-  Future<List<dynamic>> query(String functionName, List<dynamic> args) async {
-    try {
-      final contract = await loadContract();
-      final ethFunction = contract.function(functionName);
-      final result = await ethClient.call(
-          contract: contract, function: ethFunction, params: args);
-      return result;
-    } catch (error, trace) {
-      print(error);
-      return [];
-    }
-  }
-
-  Future<void> getBalance(EthereumAddress credentialAddress) async {
-    List<dynamic> result = await query("balanceOf", [credentialAddress]);
-    BigInt data = result[0];
-    setState(() {
-      balance = data.toDouble();
-    });
   }
 
   @override
@@ -135,7 +115,8 @@ class _Wallet extends State<Wallet> with AutomaticKeepAliveClientMixin<Wallet> {
                   SizedBox(height: 10),
                   Container(
                     child: Text(
-                      balance.toStringAsFixed(2) + " EVCN",
+                      balance.toString() + " EVCN",
+                      // balance.toStringAsFixed(2) + " EVCN",
                       style: TextStyle(fontSize: 28),
                     ),
                   ),
@@ -161,7 +142,11 @@ class _Wallet extends State<Wallet> with AutomaticKeepAliveClientMixin<Wallet> {
                               });
                             });
                           },
-                          onTap: () => {print("Sfsfd")},
+                          onTap: () async {
+                            balance = await cryptoTrans.getBalance(
+                                EthereumAddress.fromHex(publicAddress!));
+                            setState(() {});
+                          },
                           child: Container(
                               width: 60,
                               height: 60,

@@ -2,15 +2,24 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ev/util/rewardCalculate.dart';
+import 'package:ev/util/cryptoTrans.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:web3dart/web3dart.dart';
+
+final storage = new FlutterSecureStorage();
 
 class Rewarding extends StatelessWidget {
   final textController = TextEditingController();
+  late CryptoTrans cryptoTrans;
   final String data;
-  Rewarding({super.key, required String this.data});
+  Rewarding({super.key, required String this.data}){
+    cryptoTrans = CryptoTrans();
+  }
 
   @override
   Widget build(BuildContext context) {
     var split = data.split(";");
+    cryptoTrans.publicAddress = EthereumAddress.fromHex(split[0]);
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(children: [
@@ -82,12 +91,18 @@ class Rewarding extends StatelessWidget {
             elevation: 4,
           ),
           child: Text("Reward", style: TextStyle(fontWeight: FontWeight.w700)),
-          onPressed: () => {
-
-            print(RewardCalculator.calculateRewards(double.parse(textController.text)).round())
+          onPressed: ()async{
+            var priv = await storage.read(key: "privateKey");
+            int amount = RewardCalculator.calculateRewards(double.parse(textController.text)).round();
+            // showAlertDialog(context);
+            var res = await cryptoTrans.sendCoinTwo(amount, priv!, EthereumAddress.fromHex(split[0]));
+            print(res);
             },
         ),
       ]),
     );
   }
+
+  // showAlertDialog(BuildContext context) { ... }
+
 }

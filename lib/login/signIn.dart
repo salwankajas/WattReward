@@ -64,12 +64,11 @@ class SignIn extends StatelessWidget {
             ),
             onPressed: () async {
               UserCredential user = await signInWithGoogle();
-              print(user);
               await storage.write(key: "name", value: user.user!.displayName);
               await storage.write(key: "email", value: user.user!.email);
               await storage.write(
                   key: "id", value: user.additionalUserInfo!.profile!["id"]);
-              print(await storage.read(key: "name"));
+              // print(await storage.read(key: "name"));
               if (user != null) {
                 if (user.additionalUserInfo!.isNewUser) {
                   await addUser(user.additionalUserInfo!.profile!["id"], entity,
