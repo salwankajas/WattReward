@@ -1,5 +1,8 @@
 import 'dart:convert';
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ev/pages/chargeSlot.dart';
+import 'package:ev/util/enum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:iconsax/iconsax.dart';
@@ -9,6 +12,8 @@ import 'package:ev/icons/current_loc.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:ev/components/marker.dart';
 import 'package:ev/util/currentLoc.dart';
+import 'package:ev/util/qrScan.dart';
+import 'package:ev/util/database.dart';
 
 
 
@@ -34,6 +39,7 @@ class _Maps extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
   late final CustomMarker marker2;
   late final CustomMarker marker3;
   late final CustomMarker marker4;
+  late int slot; 
     // final CustomMarker marker2 =
     //     CustomMarker(LatLng(11.199882, 76.260287), context, _scaffoldKey,streamControllers,streamControllersRoutes);
     // final CustomMarker marker3 =
@@ -71,6 +77,25 @@ class _Maps extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
     _markerSize = 40.0 * (18 / 13.0); // Default marker size
 
   }
+
+  Future<bool> isValidCs(String data)async{
+    // var address = data.split(";")[0];
+  if (data.length == 21) {
+    DocumentSnapshot<Object?> datas = await  readDB(Entity.shop, data);
+    if(datas.exists){
+      slot = datas["slot"];
+      return true;
+    }else{
+     return false; 
+    }
+  }
+  return false;
+}
+navigator(String datas){
+  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => SelectSlot(slot: slot,)));
+}
+
   void _updateMarkerSize(double? zoom) {
     // Update the marker size based on zoom
     setState(() {
@@ -202,7 +227,7 @@ class _Maps extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                           )),
                         )))),
             Positioned(
-                bottom: 80,
+                bottom: 85,
                 right: 10,
                 child: Container(
                     width: 50,
@@ -226,6 +251,10 @@ class _Maps extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                         child: InkWell(
                           customBorder: new CircleBorder(),
                           onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => QRCodeScannerApp(isValidFunction: isValidCs, navigator: navigator,)));
                           },
                           child: Center(
                               child: const Icon(

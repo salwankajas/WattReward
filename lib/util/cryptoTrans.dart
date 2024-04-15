@@ -6,12 +6,12 @@ import 'package:http/http.dart';
 
 class CryptoTrans {
   late Web3Client ethClient;
-  String? entit;
-  CryptoTrans(String? entity) {
+  late String entit;
+  CryptoTrans([String entity ='']) {
     this.entit = entity;
     Client httpClient = Client();
     ethClient =
-        Web3Client("https://polygon-mumbai.g.alchemy.com/v2/yGX6D3Chr52l2FIkF5YQ3THPPMVaWECk", httpClient);
+        Web3Client("https://polygon-mumbai-bor-rpc.publicnode.com", httpClient);
   }
   Stream<FilterEvent>? event;
   late EthereumAddress publicAddress;
@@ -24,8 +24,9 @@ class CryptoTrans {
     if (event == null) {
       final auctionEvent = contract.event('Transfer');
       String to = "0x000000000000000000000000" + publicAddress.toString().substring(2);
-      if(entit != null){
-        FilterOptions options = FilterOptions(
+      FilterOptions options;
+      if(entit != ''){
+        options = FilterOptions(
         address: contract.address,
         topics: [
           [bytesToHex(auctionEvent.signature, padToEvenLength: true, include0x: true)],
@@ -34,7 +35,7 @@ class CryptoTrans {
         ],
       );
       }else{
-      FilterOptions options = FilterOptions(
+      options = FilterOptions(
         address: contract.address,
         topics: [
           [bytesToHex(auctionEvent.signature, padToEvenLength: true, include0x: true)],

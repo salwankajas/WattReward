@@ -2,12 +2,16 @@ import 'package:ev/nav/reward.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:ev/pages/rewarding.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-void main() => runApp(QRCodeScannerApp());
+// void main() => runApp(QRCodeScannerApp());
 
 class QRCodeScannerApp extends StatefulWidget{
+  final Future<bool> Function(String) isValidFunction;
+  final Function(String) navigator;
+
+  QRCodeScannerApp({required this.isValidFunction,required this.navigator});
+
   @override
   _QRCodeScannerAppState createState() => _QRCodeScannerAppState();
 }
@@ -68,21 +72,22 @@ class _QRCodeScannerAppState extends State<QRCodeScannerApp> {
         });
   }
 
-  bool isValidEthereumAddress(String data) {
-    var address = data.split(";")[0];
-  if (address.length == 42 && address.startsWith("0x")) {
-    return true;
-  }
-  return false;
-}
+//   bool isValidEthereumAddress(String data) {
+//     var address = data.split(";")[0];
+//   if (address.length == 42 && address.startsWith("0x")) {
+//     return true;
+//   }
+//   return false;
+// }
 
-  void _onQRViewCreated(QRViewController controller) {
+  void _onQRViewCreated(QRViewController controller){
       _controller = controller;
-      _controller!.scannedDataStream.listen((scanData) {
+      _controller!.scannedDataStream.listen((scanData) async{
         if(count == 0 ){
-          if(isValidEthereumAddress(scanData.code!)){
-            Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => Rewarding(data:scanData.code!)));
+          if(await widget.isValidFunction(scanData.code!)){
+            // Navigator.pushReplacement(context,
+            //           MaterialPageRoute(builder: (context) => Rewarding(data:scanData.code!)));
+            widget.navigator(scanData.code!);         
             count++;
           }else{
             Fluttertoast.cancel();

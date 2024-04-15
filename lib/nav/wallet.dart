@@ -59,10 +59,9 @@ class _Wallet extends State<Wallet> with AutomaticKeepAliveClientMixin<Wallet> {
       if (res == null) {
         String? id = await storage.read(key: "id");
         DocumentSnapshot<Object?> data = await readDB(Entity.user, id!);
-        Map<String, dynamic> datas = data!.data() as Map<String, dynamic>;
+        // Map<String, dynamic> datas = data.data() as Map<String, dynamic>;
         isWallet = data["wallet"];
         if (isWallet) {
-          print(data);
           privateAddress = data["privateKey"];
           await storage.write(key: "privateKey", value: privateAddress);
           publicAddress = data["publicKey"];
@@ -87,6 +86,9 @@ class _Wallet extends State<Wallet> with AutomaticKeepAliveClientMixin<Wallet> {
         privateAddress = await storage.read(key: "privateKey");
         publicAddress = await storage.read(key: "publicKey");
         name = await storage.read(key: "name");
+        cryptoTrans.publicAddress = EthereumAddress.fromHex(publicAddress!);
+        balance = await cryptoTrans
+              .getBalance(EthereumAddress.fromHex(publicAddress!));
         return true;
       } else {
         return false;

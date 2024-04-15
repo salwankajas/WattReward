@@ -8,6 +8,7 @@ import 'package:ev/util/database.dart';
 import 'package:ev/util/qrScan.dart';
 import 'package:ev/util/cryptoTrans.dart';
 import 'package:web3dart/web3dart.dart';
+import 'package:ev/pages/rewarding.dart';
 
 final storage = new FlutterSecureStorage();
 
@@ -40,6 +41,17 @@ class _Reward extends State<Reward> with AutomaticKeepAliveClientMixin<Reward> {
 
     // print(name);
   }
+  Future<bool> isValidEthereumAddress(String data)async{
+    var address = data.split(";")[0];
+  if (address.length == 42 && address.startsWith("0x")) {
+    return true;
+  }
+  return false;
+}
+navigator(String datas){
+  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => Rewarding(data:datas)));
+}
 
   Future<bool> getWallet() async {
     if (isWallet) {
@@ -71,6 +83,11 @@ class _Reward extends State<Reward> with AutomaticKeepAliveClientMixin<Reward> {
           return false;
         }
       } else if (res == "true") {
+        privateAddress = await storage.read(key: "privateKey");
+        publicAddress = await storage.read(key: "publicKey");
+        cryptoTrans.publicAddress = EthereumAddress.fromHex(publicAddress!);
+        balance = await cryptoTrans
+              .getBalance(EthereumAddress.fromHex(publicAddress!));
         return true;
       } else {
         return false;
@@ -126,7 +143,7 @@ class _Reward extends State<Reward> with AutomaticKeepAliveClientMixin<Reward> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => QRCodeScannerApp()))
+                                    builder: (context) => QRCodeScannerApp(isValidFunction: isValidEthereumAddress, navigator: navigator,)))
                           },
                       child: Container(
                           width: 100,

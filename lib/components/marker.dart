@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter/material.dart';
@@ -94,8 +95,9 @@ class CustomMarker {
                           // color: Colors.red,
                           decoration: BoxDecoration(
                             border: Border(
-                              bottom:
-                                  BorderSide(width: 0.8, color: Colors.grey.withOpacity(0.5)),
+                              bottom: BorderSide(
+                                  width: 0.8,
+                                  color: Colors.grey.withOpacity(0.5)),
                             ),
                           ),
                           child: Row(
@@ -184,9 +186,9 @@ class CustomMarker {
                         ),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Expanded(child: Container()),
+                            // Expanded(child: Container()),
                             Padding(
                               padding: const EdgeInsets.all(12.0),
                               child: Text(
@@ -201,34 +203,57 @@ class CustomMarker {
                           ],
                         ),
                         Container(
-                            width: MediaQuery.of(context).size.width,
-                            height: 60,
-                            padding: const EdgeInsets.all(12.0),
-                            decoration: BoxDecoration(
-                              border: Border(
-                                top: BorderSide(width: 0.8, color: Colors.grey.withOpacity(0.5)),
-                              ),
-                            ),
-                            child: Container(
-                              margin: EdgeInsets.symmetric(horizontal: 80),
-                              child: OutlinedButton(
-                                style: OutlinedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30.0),
+                                width: MediaQuery.of(context).size.width,
+                                // height: 30,
+                                padding: const EdgeInsets.all(10.0),
+                                // color: Colors.black,
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    top: BorderSide(
+                                        width: 0.8,
+                                        color: Colors.grey.withOpacity(0.5)),
                                   ),
-                                  minimumSize: Size(300, 80),
-                                  textStyle: TextStyle(fontSize: 14),
-                                  foregroundColor:
-                                      Colors.green,
-                                  side: BorderSide(
-                                      color: Colors.green),
-                                ),
-                                child: Text("View",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w700)),
-                                onPressed: () => {},
-                              ),
-                            )),
+                                ),),
+                        // Expanded(
+                            // child:
+                          //    Column(
+                          // mainAxisAlignment: MainAxisAlignment.center,
+                          // crossAxisAlignment: CrossAxisAlignment.center,
+                          // children: [
+                            Container(
+                                width: MediaQuery.of(context).size.width,
+                                height: 55,
+                                padding: const EdgeInsets.all(12.0),
+                                // color: Colors.black,
+                                // decoration: BoxDecoration(
+                                //   border: Border(
+                                //     top: BorderSide(
+                                //         width: 0.8,
+                                //         color: Colors.grey.withOpacity(0.5)),
+                                //   ),
+                                // ),
+                                child: Container(
+                                  margin: EdgeInsets.symmetric(horizontal: 80),
+                                  child: OutlinedButton(
+                                    style: OutlinedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(30.0),
+                                      ),
+                                      minimumSize: Size(300, 80),
+                                      textStyle: TextStyle(fontSize: 14),
+                                      foregroundColor: Colors.green,
+                                      side: BorderSide(color: Colors.green),
+                                    ),
+                                    child: Text("Offers",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w700)),
+                                    onPressed: () => {},
+                                  ),
+                                )),
+                          // ],
+                        // )
+                        // )
                       ],
                     )),
               );
