@@ -3,6 +3,7 @@ import 'package:ev/util/enum.dart';
 import 'package:flutter/material.dart';
 import 'package:ev/util/database.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:ev/pages/filterCharge.dart';
 
 class SelectSlot extends StatefulWidget {
   final int slot;
@@ -131,7 +132,8 @@ class _SelectSlotState extends State<SelectSlot> {
                                 ["timestamp"]
                             .toString()) <
                     90000) {
-                  print("connect");
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => FilterCharge(slot: widget.slot,id:widget.id)));
                 } else {
                   // print("please reconnect plug to ev");
                   Fluttertoast.showToast(
