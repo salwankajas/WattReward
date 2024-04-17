@@ -93,7 +93,7 @@ class _Maps extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
 }
 navigator(String datas){
   Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => SelectSlot(slot: slot,)));
+                      MaterialPageRoute(builder: (context) => SelectSlot(slot: slot,id:datas)));
 }
 
   void _updateMarkerSize(double? zoom) {

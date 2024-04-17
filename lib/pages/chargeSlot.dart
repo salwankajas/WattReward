@@ -1,8 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ev/util/enum.dart';
 import 'package:flutter/material.dart';
+import 'package:ev/util/database.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class SelectSlot extends StatefulWidget {
   final int slot;
-  SelectSlot({super.key, required this.slot});
+  final String id;
+  SelectSlot({super.key, required this.slot, required this.id});
   @override
   _SelectSlotState createState() => _SelectSlotState();
 }
@@ -83,15 +88,14 @@ class _SelectSlotState extends State<SelectSlot> {
                               width: 80,
                               child: Radio<int>(
                                 activeColor: Colors.green,
-                                  value: index,
-                                  groupValue: selectedIndex,
-                                  onChanged: (int? value) {
-                                    setState(() {
-                                      selectedIndex = value!;
-                                    });
-                                  },
-                                ),
-                              
+                                value: index,
+                                groupValue: selectedIndex,
+                                onChanged: (int? value) {
+                                  setState(() {
+                                    selectedIndex = value!;
+                                  });
+                                },
+                              ),
                             )
                           ],
                         ),
@@ -116,8 +120,27 @@ class _SelectSlotState extends State<SelectSlot> {
               ),
               child: Text("Continue",
                   style: TextStyle(fontWeight: FontWeight.w700)),
-              onPressed: () => {
-                
+              onPressed: () async {
+                DocumentSnapshot<Object?> data =
+                    await readDB(Entity.shop, widget.id);
+                Map<String, dynamic> datas =
+                    data!.data() as Map<String, dynamic>;
+                DateTime now = DateTime.now();
+                if (now.millisecondsSinceEpoch -
+                        int.parse(datas["charger"]['${selectedIndex}']
+                                ["timestamp"]
+                            .toString()) <
+                    90000) {
+                  print("connect");
+                } else {
+                  // print("please reconnect plug to ev");
+                  Fluttertoast.showToast(
+                      msg: "Please reconnect plug to ev",
+                      backgroundColor: Colors.grey,
+                      fontSize: 14,
+                      gravity: ToastGravity.BOTTOM,
+                      textColor: Colors.white);
+                }
               },
             ),
           ),
