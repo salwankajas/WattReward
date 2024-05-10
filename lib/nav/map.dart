@@ -14,8 +14,7 @@ import 'package:ev/components/marker.dart';
 import 'package:ev/util/currentLoc.dart';
 import 'package:ev/util/qrScan.dart';
 import 'package:ev/util/database.dart';
-
-
+import 'package:ev/util/database.dart';
 
 class Maps extends StatefulWidget {
   @override
@@ -31,7 +30,8 @@ class _Maps extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
   LatLng initialMap = LatLng(9.853852, 76.947620);
   List<LatLng> routePoints = [LatLng(9.853852, 76.947620)];
   late double _markerSize;
-  final streamControllers = StreamController<PersistentBottomSheetController?>();
+  final streamControllers =
+      StreamController<PersistentBottomSheetController?>();
   final streamControllersRoutes = StreamController<List<LatLng>>();
   late StreamSubscription<PersistentBottomSheetController?> streamSubscription;
   late StreamSubscription<List<LatLng>> streamSubscriptionRoutes;
@@ -39,13 +39,14 @@ class _Maps extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
   late final CustomMarker marker2;
   late final CustomMarker marker3;
   late final CustomMarker marker4;
-  late int slot; 
-    // final CustomMarker marker2 =
-    //     CustomMarker(LatLng(11.199882, 76.260287), context, _scaffoldKey,streamControllers,streamControllersRoutes);
-    // final CustomMarker marker3 =
-    //     CustomMarker(LatLng(9.853643, 76.947692), context, _scaffoldKey,streamControllers,streamControllersRoutes);
-    // final CustomMarker marker4 =
-    //     CustomMarker(LatLng(9.853567, 76.946688), context, _scaffoldKey,streamControllers,streamControllersRoutes);
+  late int slot;
+  List<Marker> a = [];
+  // final CustomMarker marker2 =
+  //     CustomMarker(LatLng(11.199882, 76.260287), context, _scaffoldKey,streamControllers,streamControllersRoutes);
+  // final CustomMarker marker3 =
+  //     CustomMarker(LatLng(9.853643, 76.947692), context, _scaffoldKey,streamControllers,streamControllersRoutes);
+  // final CustomMarker marker4 =
+  //     CustomMarker(LatLng(9.853567, 76.946688), context, _scaffoldKey,streamControllers,streamControllersRoutes);
 
   @override
   void dispose() {
@@ -60,41 +61,70 @@ class _Maps extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
 
   void initState() {
     super.initState();
-    marker1 =
-        CustomMarker("kajas",LatLng(11.19899, 76.260804), _scaffoldKey,streamControllers,streamControllersRoutes);
-    marker2 =
-        CustomMarker("Kajas",LatLng(11.199882, 76.260287), _scaffoldKey,streamControllers,streamControllersRoutes);
-    marker3 =CustomMarker("Desktop Solution Echarge",LatLng(9.853643, 76.947692), _scaffoldKey,streamControllers,streamControllersRoutes);
-    marker4 =CustomMarker("Parambans Echarge",LatLng(9.853567, 76.946688), _scaffoldKey,streamControllers,streamControllersRoutes);
-    streamSubscription = streamControllers.stream.listen(
-      (event) => (controller = event)
-    );
-    streamSubscriptionRoutes = streamControllersRoutes.stream.listen(
-      (event) => (this.setState((){
-        routePoints = event;
-      }))
-    );
+    a.add(Marker(
+        point: mapPos,
+        height: 50,
+        rotate: true,
+        width: 50,
+        child: Container(
+            alignment: Alignment.center, child: const CurrentLocIcon())));
+    readDBStore().then((value) => {
+          value.docs.forEach((doc) {
+            Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+            if (data["verified"]) {
+              GeoPoint location = data["location"] as GeoPoint;
+              print(location.latitude);
+              CustomMarker marker = CustomMarker(
+                  data["name"],
+                  LatLng(location.latitude, location.longitude),
+                  _scaffoldKey,
+                  streamControllers,
+                  streamControllersRoutes,
+                  doc.id,
+                  data["slot"]
+                  );
+              a.add(marker.markerBuilder(_markerSize));
+            }
+          })
+        });
+    setState(() {});
+    // marker1 =
+    //     CustomMarker("kajas",LatLng(11.19899, 76.260804), _scaffoldKey,streamControllers,streamControllersRoutes);
+    // marker2 =
+    //     CustomMarker("Kajas",LatLng(11.199882, 76.260287), _scaffoldKey,streamControllers,streamControllersRoutes);
+    // marker3 =CustomMarker("Desktop Solution Echarge",LatLng(9.853643, 76.947692), _scaffoldKey,streamControllers,streamControllersRoutes);
+    // marker4 =CustomMarker("Parambans Echarge",LatLng(9.853567, 76.946688), _scaffoldKey,streamControllers,streamControllersRoutes);
+
+    streamSubscription =
+        streamControllers.stream.listen((event) => (controller = event));
+    streamSubscriptionRoutes =
+        streamControllersRoutes.stream.listen((event) => (this.setState(() {
+              routePoints = event;
+            })));
     _markerSize = 40.0 * (18 / 13.0); // Default marker size
-
+    // a =[marker1.markerBuilder(_markerSize),marker2.markerBuilder(_markerSize),marker3.markerBuilder(_markerSize),marker4.markerBuilder(_markerSize)];
   }
 
-  Future<bool> isValidCs(String data)async{
+  Future<bool> isValidCs(String data) async {
     // var address = data.split(";")[0];
-  if (data.length == 21) {
-    DocumentSnapshot<Object?> datas = await  readDB(Entity.shop, data);
-    if(datas.exists){
-      slot = datas["slot"];
-      return true;
-    }else{
-     return false; 
+    if (data.length == 21) {
+      DocumentSnapshot<Object?> datas = await readDB(Entity.shop, data);
+      if (datas.exists) {
+        slot = datas["slot"];
+        return true;
+      } else {
+        return false;
+      }
     }
+    return false;
   }
-  return false;
-}
-navigator(String datas){
-  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => SelectSlot(slot: slot,id:datas)));
-}
+
+  navigator(String datas) {
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => SelectSlot(slot: slot, id: datas)));
+  }
 
   void _updateMarkerSize(double? zoom) {
     // Update the marker size based on zoom
@@ -121,7 +151,7 @@ navigator(String datas){
                   onTap: (p, s) {
                     _closeModalBottomSheet();
                     setState(() {
-                      routePoints=[];
+                      routePoints = [];
                     });
                   },
                   onPositionChanged: (position, hasGesture) {
@@ -149,38 +179,41 @@ navigator(String datas){
                           strokeWidth: 5)
                     ],
                   ),
-                  MarkerLayer(markers: <Marker>[
-                    Marker(
-                        point: mapPos,
-                        height: 50,
-                        rotate: true,
-                        width: 50,
-                        child: Container(
-                            alignment: Alignment.center,
-                            child: const CurrentLocIcon())),
-                    // Marker(
-                    //     point: LatLng(11.199882, 76.260287),
-                    //     height: _markerSize,
-                    //     width: _markerSize,
-                    //     rotate: true,
-                    //     child: Container(
-                    //       alignment: Alignment.center,
-                    //       child: IconButton(
-                    //         icon: Image.asset(
-                    //           "images/icon/ev_location.png",
-                    //           width: _markerSize,
-                    //           height: _markerSize,
-                    //         ),
-                    //         onPressed: () {
-                    //           print("touched me");
-                    //         },
-                    //       ),
-                    //     )),
-                    marker1.markerBuilder(_markerSize),
-                    marker2.markerBuilder(_markerSize),
-                    marker3.markerBuilder(_markerSize),
-                    marker4.markerBuilder(_markerSize),
-                  ])
+                  MarkerLayer(markers: a
+                      // <Marker>[
+                      //   Marker(
+                      //       point: mapPos,
+                      //       height: 50,
+                      //       rotate: true,
+                      //       width: 50,
+                      //       child: Container(
+                      //           alignment: Alignment.center,
+                      //           child: const CurrentLocIcon())),
+                      //   // Marker(
+                      //   //     point: LatLng(11.199882, 76.260287),
+                      //   //     height: _markerSize,
+                      //   //     width: _markerSize,
+                      //   //     rotate: true,
+                      //   //     child: Container(
+                      //   //       alignment: Alignment.center,
+                      //   //       child: IconButton(
+                      //   //         icon: Image.asset(
+                      //   //           "images/icon/ev_location.png",
+                      //   //           width: _markerSize,
+                      //   //           height: _markerSize,
+                      //   //         ),
+                      //   //         onPressed: () {
+                      //   //           print("touched me");
+                      //   //         },
+                      //   //       ),
+                      //   //     )),
+                      //   // marker1.markerBuilder(_markerSize),
+                      //   // marker2.markerBuilder(_markerSize),
+                      //   // marker3.markerBuilder(_markerSize),
+                      //   // marker4.markerBuilder(_markerSize),
+                      //   a
+                      // ]
+                      )
                 ],
               ),
             ),
@@ -213,11 +246,23 @@ navigator(String datas){
                             print('Circle Clicked!');
                             await locationRequest();
                             Position pos = await determinePosition();
-                            mapPos = LatLng(pos.latitude, pos.longitude);
-                            initialMap = mapPos;
-                            // print(mapPos);
-                            _mapController.move(mapPos, 18.0);
-                            setState(() {});
+                            setState(() {
+                              mapPos = LatLng(pos.latitude, pos.longitude);
+                              initialMap = mapPos;
+                              // print(mapPos);
+                              a.insert(
+                                  0,
+                                  Marker(
+                                      point: mapPos,
+                                      height: 50,
+                                      rotate: true,
+                                      width: 50,
+                                      child: Container(
+                                          alignment: Alignment.center,
+                                          child: const CurrentLocIcon())));
+                              print(a);
+                              _mapController.move(mapPos, 18.0);
+                            });
                           },
                           child: Center(
                               child: const Icon(
@@ -247,20 +292,22 @@ navigator(String datas){
                     ),
                     child: Material(
                         shape: CircleBorder(),
-                        color: Colors.white ,// Set the border radius),
+                        color: Colors.white, // Set the border radius),
                         child: InkWell(
                           customBorder: new CircleBorder(),
                           onTap: () {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => QRCodeScannerApp(isValidFunction: isValidCs, navigator: navigator,)));
+                                    builder: (context) => QRCodeScannerApp(
+                                          isValidFunction: isValidCs,
+                                          navigator: navigator,
+                                        )));
                           },
                           child: Center(
                               child: const Icon(
                             Iconsax.scan_barcode,
-                            color: Color.fromARGB(
-                            255, 95, 190, 98),
+                            color: Color.fromARGB(255, 95, 190, 98),
                             size: 26,
                           )),
                         )))),

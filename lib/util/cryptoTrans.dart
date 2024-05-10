@@ -11,17 +11,17 @@ class CryptoTrans {
     this.entit = entity;
     Client httpClient = Client();
     ethClient =
-        Web3Client("https://polygon-mumbai-bor-rpc.publicnode.com", httpClient);
+        Web3Client("https://rpc-amoy.polygon.technology", httpClient);
   }
   Stream<FilterEvent>? event;
   late EthereumAddress publicAddress;
 
   Future<DeployedContract> loadContract() async {
     String abi = await rootBundle.loadString("assets/abi/abi.json");
-    String contractAddress = "0x263266c8b94e921f34e093df09B52A89B432a55a";
+    String contractAddress = "0x965b9ca7dd9ec22ff615a156b731e97b7baf9da1";
     final contract = DeployedContract(ContractAbi.fromJson(abi, "EVCoin"),
         EthereumAddress.fromHex(contractAddress));
-    if (event == null) {
+    if (event == null && publicAddress != null) {
       final auctionEvent = contract.event('Transfer');
       String to = "0x000000000000000000000000" + publicAddress.toString().substring(2);
       FilterOptions options;
@@ -72,10 +72,25 @@ class CryptoTrans {
     return data.toInt();
     // balance = data.toDouble();
   }
+  // Future<int> approve(EthereumAddress spender,int value) async {
+  //   List<dynamic> result = await query("approve", [spender,BigInt.from(value)]);
+  //   BigInt data = result[0];
+  //   return data.toInt();
+  //   // balance = data.toDouble();
+  // }
 
+  Future<String> approve(String privAddress,EthereumAddress spender,int value) async {
+    // var bigAmount = BigInt.from(myAmount);
+    var response = await submit("approve", [spender,BigInt.from(value)],privAddress);
+    return response;
+  }
   Future<String> sendCoinTwo(int myAmount,String privAddress,EthereumAddress targetAddress) async {
     var bigAmount = BigInt.from(myAmount);
     var response = await submit("transfer",[targetAddress,bigAmount],privAddress);
+    return response;
+  }
+  Future<String> transferFrom(String privAddress,EthereumAddress from,EthereumAddress to,int value) async {
+    var response = await submit("transferFrom",[from,to,BigInt.from(value)],privAddress);
     return response;
   }
 
@@ -84,7 +99,7 @@ class CryptoTrans {
     final ethFunction = contract.function(functionName);
     EthPrivateKey key = EthPrivateKey.fromHex(privAddress);
     Transaction transaction = Transaction.callContract(contract: contract, function: ethFunction, parameters: args);
-    final result = await ethClient.sendTransaction(key,transaction ,chainId:80001);
+    final result = await ethClient.sendTransaction(key,transaction ,chainId:80002);
     return result;
   }
 

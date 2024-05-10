@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ev/pages/shopData.dart';
 import 'package:ev/pages/shopNav.dart';
 import 'package:flutter/material.dart';
 import 'package:ev/home.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:ev/util/auth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -73,8 +75,35 @@ class SignIn extends StatelessWidget {
                 if (user.additionalUserInfo!.isNewUser) {
                   await addUser(user.additionalUserInfo!.profile!["id"], entity,
                       user.user!.displayName!, user.user!.email!);
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => ShopData()));
+                      if(entity.value == "shop"){
+                        Navigator.push(context,MaterialPageRoute(builder: (context) => ShopData(id: user.additionalUserInfo!.profile!["id"])));
+                        return;
+                      }
+                }else{
+                  print("out");
+                  if(entity.value == "shop"){
+                  DocumentSnapshot<Object?> data = await readDB(entity, user.additionalUserInfo!.profile!["id"]);
+                  print(!data["edited"]);
+                  if(!data["edited"]){
+                        Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => ShopData(id: user.additionalUserInfo!.profile!["id"],)));
+                        return;
+                  }else{
+                    if(data["verified"]){
+                      Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => ShopNav()));
+                      return;
+                    }else{
+                      Fluttertoast.showToast(
+                        msg: "User not Verified",
+                        backgroundColor: Colors.grey,
+                        fontSize: 14,
+                        gravity: ToastGravity.BOTTOM,
+                        textColor: Colors.white);
+                        signOutFromGoogle().then((e)=>{Navigator.pop(context)});
+                        return;
+                    }
+                  }
+                  }
                 }
                 // await addUser(user.additionalUserInfo!.profile!["id"], entity,
                 //     user.user!.displayName!, user.user!.email!);
@@ -83,9 +112,11 @@ class SignIn extends StatelessWidget {
                 if (entity.value == "shop") {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => ShopNav()));
+                      return;
                 } else {
                   Navigator.push(
                       context, MaterialPageRoute(builder: (context) => Home()));
+                      return;
                 }
               }
             }),

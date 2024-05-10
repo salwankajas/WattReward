@@ -1,4 +1,8 @@
 import 'dart:io';
+// import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ev/util/auth.dart';
+import 'package:ev/util/database.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
@@ -7,6 +11,8 @@ import 'package:latlong2/latlong.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class ShopData extends StatefulWidget {
+  final String id;
+  ShopData({super.key, required this.id});
   @override
   _ShopData createState() => _ShopData();
 }
@@ -17,6 +23,7 @@ class _ShopData extends State<ShopData> {
   LatLng initialMap = LatLng(9.853852, 76.947620);
   MapController _mapController = MapController();
   final textController = TextEditingController();
+  final textController1 = TextEditingController();
   LatLng? points;
   File? _image;
   Color clr = Colors.black;
@@ -33,7 +40,12 @@ class _ShopData extends State<ShopData> {
     super.dispose();
   }
 
-  PersistentBottomSheetController createScaffold() {
+  void updateState() {
+  setState(() {
+  });
+}
+
+  PersistentBottomSheetController createScaffold(void Function() updateParentState) {
     return _scaffoldKey.currentState!.showBottomSheet(
         backgroundColor: Colors.transparent, elevation: 0, (context) {
       return StatefulBuilder(builder: (BuildContext context,
@@ -69,6 +81,7 @@ class _ShopData extends State<ShopData> {
                           setStates(() {
                             points = LatLng(s.latitude, s.longitude);
                           });
+                          updateParentState();
                         },
                         onPositionChanged: (position, hasGesture) {
                           if (hasGesture) {}
@@ -231,56 +244,56 @@ class _ShopData extends State<ShopData> {
                   const SizedBox(
                     height: 20,
                   ),
-                  Material(
-                    shape: CircleBorder(),
-                    color: Colors.white, // Set the border radius),
-                    child: InkWell(
-                      customBorder: new CircleBorder(),
-                      onTap: () async {
-                        final image = await ImagePicker()
-                            .pickImage(source: ImageSource.gallery);
-                        if (image != null) {
-                          setState(() {
-                            _image = File(image.path);
-                          });
-                        }
-                      },
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          ClipRRect(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(100)),
-                              child: Container(
-                                width: 120.0,
-                                height: 120.0,
-                                child: Center(
-                                  child: _image == null
-                                      ? const Icon(
-                                          Iconsax.edit,
-                                          color: Colors.black,
-                                        )
-                                      : Image.file(_image!,
-                                          width: 120, height: 120),
-                                ),
-                              )),
-                          Container(
-                            width: 120.0,
-                            height: 120.0,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color:
-                                    Colors.green, // Set the color of the border
-                                width: 2.0, // Set the width of the border
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    // )
-                  ),
+                  // Material(
+                  //   shape: CircleBorder(),
+                  //   color: Colors.white, // Set the border radius),
+                  //   child: InkWell(
+                  //     customBorder: new CircleBorder(),
+                  //     onTap: () async {
+                  //       final image = await ImagePicker()
+                  //           .pickImage(source: ImageSource.gallery);
+                  //       if (image != null) {
+                  //         setState(() {
+                  //           _image = File(image.path);
+                  //         });
+                  //       }
+                  //     },
+                  //     child: Stack(
+                  //       alignment: Alignment.center,
+                  //       children: [
+                  //         ClipRRect(
+                  //             borderRadius:
+                  //                 BorderRadius.all(Radius.circular(100)),
+                  //             child: Container(
+                  //               width: 120.0,
+                  //               height: 120.0,
+                  //               child: Center(
+                  //                 child: _image == null
+                  //                     ? const Icon(
+                  //                         Iconsax.edit,
+                  //                         color: Colors.black,
+                  //                       )
+                  //                     : Image.file(_image!,
+                  //                         width: 120, height: 120),
+                  //               ),
+                  //             )),
+                  //         Container(
+                  //           width: 120.0,
+                  //           height: 120.0,
+                  //           decoration: BoxDecoration(
+                  //             shape: BoxShape.circle,
+                  //             border: Border.all(
+                  //               color:
+                  //                   Colors.green, // Set the color of the border
+                  //               width: 2.0, // Set the width of the border
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  //   // )
+                  // ),
                   const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -314,6 +327,39 @@ class _ShopData extends State<ShopData> {
                   SizedBox(
                     height: 30,
                   ),
+                  const Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Number of Slots",
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      textAlign: TextAlign.start,
+                    ),
+                  ),
+                  Center(
+                      child: Container(
+                    width: 330,
+                    height: 40,
+                    // padding: const EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        border:
+                            Border(bottom: BorderSide(color: Colors.green))),
+                    child: TextField(
+                      textInputAction: TextInputAction.search,
+                      controller: textController1,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        // hintText: 'Shop Name',
+                      ),
+                      style: TextStyle(color: Colors.black),
+                      cursorColor: Colors.green,
+                    ),
+                  )),
+                  SizedBox(
+                    height: 30,
+                  ),
                   Center(
                     child: GestureDetector(
                       onTapDown: (e) => {
@@ -326,7 +372,7 @@ class _ShopData extends State<ShopData> {
                           clr = Colors.black;
                         })
                       },
-                      onTap: () => {controllerr = createScaffold()},
+                      onTap: () => {controllerr = createScaffold(updateState)},
                       child: Wrap(
                         alignment: WrapAlignment.spaceEvenly,
                         crossAxisAlignment: WrapCrossAlignment.center,
@@ -343,7 +389,14 @@ class _ShopData extends State<ShopData> {
                     ),
                   ),
                   SizedBox(
-                    height: 40,
+                    height: 20,
+                  ),
+                  points!=null ?
+                  Center(
+                    child: Text("latitude: ${double.parse(points!.latitude.toStringAsFixed(6))} , longitude: ${double.parse(points!.longitude.toStringAsFixed(6))}"),
+                  ):SizedBox(),
+                  SizedBox(
+                    height: 20,
                   ),
                   OutlinedButton(
                       style: OutlinedButton.styleFrom(
@@ -363,9 +416,13 @@ class _ShopData extends State<ShopData> {
                       onPressed: () {
                         if (points != null &&
                             textController.text != "" &&
-                            _image != null) {
-                              print(textController.text);
-                          print("In");
+                            // _image != null
+                            textController1.text !=""
+                            ) {
+                              GeoPoint geo = GeoPoint(points!.latitude, points!.longitude);
+                              addShopData(widget.id, textController.text, int.parse(textController1.text), geo);
+                              signOutFromGoogle().then((e)=>{Navigator.pop(context)});
+
                         } else {
                           Fluttertoast.showToast(
               msg: "You should fill all fields to continue",

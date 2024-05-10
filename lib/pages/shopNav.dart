@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:ev/nav/map.dart';
 import 'package:ev/nav/acc.dart';
 import 'package:ev/nav/reward.dart';
+import 'package:ev/pages/offer.dart';
 
 var pressed = 0;
 int preTime = DateTime.now().millisecondsSinceEpoch;
@@ -82,6 +83,12 @@ class _ShopNav extends State<ShopNav> {
   _pageController.jumpToPage(index);
 }
 
+@override
+void initState(){
+  
+  super.initState();
+}
+
   @override
   void dispose() {
     // Clean up the controller when the widget is disposed.
@@ -101,8 +108,8 @@ class _ShopNav extends State<ShopNav> {
         controller: _pageController,
         children: <Widget>[
           Reward(),
-          Text("sdfsdf"),
-          Text("sdfsdf"),
+          OfferPage(),
+          // Text("sdfsdf"),
           Acc(),
         ],
         onPageChanged: (pages) {
@@ -128,8 +135,8 @@ class _ShopNav extends State<ShopNav> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Iconsax.money_send), label: "Reward"),
           BottomNavigationBarItem(icon: Icon(Iconsax.transaction_minus), label: "Offers"),
-          BottomNavigationBarItem(
-              icon: Icon(Iconsax.note), label: "Transaction"),
+          // BottomNavigationBarItem(
+          //     icon: Icon(Iconsax.note), label: "Transaction"),
           BottomNavigationBarItem(
               icon: Icon(Iconsax.profile_2user), label: "Account",
               )

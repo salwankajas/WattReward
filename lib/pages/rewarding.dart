@@ -97,6 +97,7 @@ class Rewarding extends StatelessWidget {
             // showAlertDialog(context);
             var res = await cryptoTrans.sendCoinTwo(amount, priv!, EthereumAddress.fromHex(split[0]));
             print(res);
+            Navigator.pop(context);
             },
         ),
       ]),

@@ -8,6 +8,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:ev/util/currentLoc.dart';
 import 'package:ev/util/route.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:ev/pages/showOffer.dart';
 
 late var point;
 
@@ -15,6 +16,8 @@ class CustomMarker {
   late LatLng points;
   late LatLng currPoints;
   late String name;
+  late String id;
+  late int slot;
   double? distance;
   List<LatLng>? routes;
   late BuildContext context;
@@ -27,12 +30,17 @@ class CustomMarker {
       LatLng point,
       GlobalKey<ScaffoldState> _scaffoldKey,
       StreamController<PersistentBottomSheetController?> streamControllers,
-      StreamController<List<LatLng>> streamControllersRoutes) {
+      StreamController<List<LatLng>> streamControllersRoutes,
+      String id,
+      int slot,
+      ) {
     this.name = name;
     this.points = point;
     this._scaffoldKey = _scaffoldKey;
     this.streamControllers = streamControllers;
     this.streamControllersRoutes = streamControllersRoutes;
+    this.id = id;
+    this.slot = slot;
   }
   getController() {
     return controller;
@@ -192,7 +200,7 @@ class CustomMarker {
                             Padding(
                               padding: const EdgeInsets.all(12.0),
                               child: Text(
-                                "3 Chargers",
+                                "${slot} Chargers",
                                 textAlign: TextAlign.right,
                                 style: TextStyle(
                                     fontWeight: FontWeight.w500,
@@ -248,7 +256,10 @@ class CustomMarker {
                                     child: Text("Offers",
                                         style: TextStyle(
                                             fontWeight: FontWeight.w700)),
-                                    onPressed: () => {},
+                                    onPressed: () => {
+                                      Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => ShowOffer(id:id)))
+                                    },
                                   ),
                                 )),
                           // ],

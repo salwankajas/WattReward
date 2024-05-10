@@ -25,7 +25,7 @@ class _Wallet extends State<Wallet> with AutomaticKeepAliveClientMixin<Wallet> {
   late Client httpClient;
   late CryptoTrans cryptoTrans;
   late Stream<FilterEvent> event;
-  late Web3Client ethClient;
+  // late Web3Client ethClient;
   int? selected;
   String? publicAddress;
   String? privateAddress;
@@ -47,7 +47,6 @@ class _Wallet extends State<Wallet> with AutomaticKeepAliveClientMixin<Wallet> {
     cryptoTrans = CryptoTrans();
     super.initState();
 
-    // print(name);
   }
 
   Future<bool> getWallet() async {

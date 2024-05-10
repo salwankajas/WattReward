@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ev/util/enum.dart';
 import 'package:flutter/material.dart';
 import 'package:ev/util/database.dart';
+import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ev/pages/filterCharge.dart';
 
@@ -14,6 +15,17 @@ class SelectSlot extends StatefulWidget {
 }
 
 class _SelectSlotState extends State<SelectSlot> {
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    super.dispose();
+  }
   int selectedIndex = -1;
   @override
   Widget build(BuildContext context) {
@@ -54,7 +66,7 @@ class _SelectSlotState extends State<SelectSlot> {
                           border: Border.all(
                               color: Colors.grey.withOpacity(0.5), width: 0.5),
                         ),
-                        margin: EdgeInsets.all(12),
+                        margin: EdgeInsets.all(8),
                         height: 90,
                         width: MediaQuery.of(context).size.width,
                         child: Row(
@@ -68,7 +80,7 @@ class _SelectSlotState extends State<SelectSlot> {
                                 height: 50,
                               ),
                             ),
-                            Expanded(
+                            SizedBox(
                               child: Container(
                                 padding: EdgeInsets.only(
                                     left:
@@ -131,9 +143,9 @@ class _SelectSlotState extends State<SelectSlot> {
                         int.parse(datas["charger"]['${selectedIndex}']
                                 ["timestamp"]
                             .toString()) <
-                    90000) {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => FilterCharge(slot: widget.slot,id:widget.id)));
+                    120000) {
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) => FilterCharge(slot: selectedIndex,id:widget.id)));
                 } else {
                   // print("please reconnect plug to ev");
                   Fluttertoast.showToast(

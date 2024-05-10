@@ -20,13 +20,16 @@ class _QRCodeScannerAppState extends State<QRCodeScannerApp> {
   int count=0;
   QRViewController? _controller;
   final GlobalKey _qrKey = GlobalKey(debugLabel: 'QR');
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   void dispose() {
     _controller?.dispose();
     super.dispose();
   }
-
 
   Future<PermissionStatus> _getCameraPermission() async {
     var status = await Permission.camera.status;
@@ -52,8 +55,8 @@ class _QRCodeScannerAppState extends State<QRCodeScannerApp> {
           }
           if (snapshot.hasData) {
             return Scaffold(
-              body: Expanded(
-                    flex: 5,
+              body: SizedBox(
+                    // flex: 5,
                     child: QRView(
                       key: _qrKey,
                       overlay: QrScannerOverlayShape(
