@@ -21,8 +21,8 @@ class _Reward extends State<Reward> with AutomaticKeepAliveClientMixin<Reward> {
   late CryptoTrans cryptoTrans;
   var event;
   int? selected;
-  String? publicAddress;
-  String? privateAddress;
+  late String publicAddress;
+  late String privateAddress;
   bool isWallet = false;
   bool clicked = false;
   Color clr = Colors.black;
@@ -36,7 +36,9 @@ class _Reward extends State<Reward> with AutomaticKeepAliveClientMixin<Reward> {
 
   @override
   void initState() {
-    cryptoTrans = CryptoTrans("shop");
+    cryptoTrans= CryptoTrans("shop");
+    publicAddress=" ";
+    privateAddress=" ";
     super.initState();
 
     // print(name);
@@ -55,7 +57,7 @@ navigator(String datas){
 
   Future<bool> getWallet() async {
     if (isWallet) {
-      cryptoTrans.getBalance(EthereumAddress.fromHex(publicAddress!)).then((value) => {if(balance != value){
+      cryptoTrans!.getBalance(EthereumAddress.fromHex(publicAddress)).then((value) => {if(balance != value){
           setState(() {
             balance = value;
           })
@@ -74,25 +76,27 @@ navigator(String datas){
           publicAddress = data["publicKey"];
           await storage.write(key: "publicKey", value: publicAddress);
           await storage.write(key: "isWallet", value: "true");
-          cryptoTrans.publicAddress = EthereumAddress.fromHex(publicAddress!);
+          cryptoTrans!.publicAddress = EthereumAddress.fromHex(publicAddress!);
           balance = await cryptoTrans
-              .getBalance(EthereumAddress.fromHex(publicAddress!));
-          event = cryptoTrans.loadEvent();
+              !.getBalance(EthereumAddress.fromHex(publicAddress!));
+          event = cryptoTrans!.loadEvent();
           event.listen((e) async {
-            balance = await cryptoTrans
+            balance = await cryptoTrans!
               .getBalance(EthereumAddress.fromHex(publicAddress!));
             setState(() {});
+          });
+          setState(() {
+            
           });
           return true;
         } else {
           return false;
         }
       } else if (res == "true") {
-        print("Dfgdfg");
-        privateAddress = await storage.read(key: "privateKey");
-        publicAddress = await storage.read(key: "publicKey");
-        cryptoTrans.publicAddress = EthereumAddress.fromHex(publicAddress!);
-        cryptoTrans.getBalance(EthereumAddress.fromHex(publicAddress!)).then((value) => {if(balance != value){
+        privateAddress = (await storage.read(key: "privateKey"))!;
+        publicAddress = (await storage.read(key: "publicKey"))!;
+        cryptoTrans!.publicAddress = EthereumAddress.fromHex(publicAddress!);
+        cryptoTrans!.getBalance(EthereumAddress.fromHex(publicAddress!)).then((value) => {if(balance != value){
           setState(() {
             balance = value;
           })
@@ -213,10 +217,13 @@ navigator(String datas){
                                 // print(id);
                                 privateAddress = privateKey.toString();
                                 publicAddress = publicKey.toString();
+                                print("wallet");
+                                print(publicAddress);
+
                                 // addUserDetails(privateKey, publicKey);
-                                isWallet = true;
-                                await storage.write(
-                                    key: "isWallet", value: "true");
+                                // isWallet = true;
+                                // await storage.write(
+                                //     key: "isWallet", value: "true");
                                 await storage.write(
                                     key: "privateKey", value: privateAddress);
                                 await storage.write(

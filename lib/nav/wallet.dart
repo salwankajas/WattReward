@@ -23,7 +23,7 @@ class Wallet extends StatefulWidget {
 
 class _Wallet extends State<Wallet> with AutomaticKeepAliveClientMixin<Wallet> {
   late Client httpClient;
-  late CryptoTrans cryptoTrans;
+  CryptoTrans cryptoTrans = CryptoTrans();
   late Stream<FilterEvent> event;
   // late Web3Client ethClient;
   int? selected;
@@ -44,13 +44,19 @@ class _Wallet extends State<Wallet> with AutomaticKeepAliveClientMixin<Wallet> {
 
   @override
   void initState() {
-    cryptoTrans = CryptoTrans();
+    // cryptoTrans = CryptoTrans();
     super.initState();
 
   }
 
   Future<bool> getWallet() async {
+    print("se");
     if (isWallet) {
+      cryptoTrans.getBalance(EthereumAddress.fromHex(publicAddress!)).then((value) => {if(balance != value){
+          setState(() {
+            balance = value;
+          })
+          }});
       return true;
     } else {
       var res = await storage.read(key: "isWallet");
@@ -77,11 +83,15 @@ class _Wallet extends State<Wallet> with AutomaticKeepAliveClientMixin<Wallet> {
               .getBalance(EthereumAddress.fromHex(publicAddress!));
             setState(() {});
           });
+          setState(() {
+            
+          });
           return true;
         } else {
           return false;
         }
       } else if (res == "true") {
+        print("Fdgdf");
         privateAddress = await storage.read(key: "privateKey");
         publicAddress = await storage.read(key: "publicKey");
         name = await storage.read(key: "name");
@@ -257,8 +267,8 @@ class _Wallet extends State<Wallet> with AutomaticKeepAliveClientMixin<Wallet> {
                                 privateAddress = privateKey.toString();
                                 publicAddress = publicKey.toString();
                                 // addUserDetails(privateKey, publicKey);
-                                await storage.write(
-                                    key: "isWallet", value: "true");
+                                // await storage.write(
+                                //     key: "isWallet", value: "true");
                                 await storage.write(
                                     key: "privateKey", value: privateAddress);
                                 await storage.write(

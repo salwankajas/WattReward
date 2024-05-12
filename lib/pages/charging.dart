@@ -100,7 +100,7 @@ class ChargingBody extends StatefulWidget {
 }
 
 class _ChargingBody extends State<ChargingBody> {
-  final socket = IO.io('http://192.168.1.3:5002', <String, dynamic>{
+  final socket = IO.io('http://192.168.1.11:5002', <String, dynamic>{
     'transports': ['websocket'],
     'autoConnect': false,
   });
@@ -110,7 +110,7 @@ class _ChargingBody extends State<ChargingBody> {
   bool _showProgressDialog = true;
   bool _isTransaction=true;
   String transaction="";
-  String head = "Stopping Charging";
+  String head = "Stopping Charging...";
 
   @override
   void dispose() {
