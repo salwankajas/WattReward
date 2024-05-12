@@ -55,6 +55,11 @@ navigator(String datas){
 
   Future<bool> getWallet() async {
     if (isWallet) {
+      cryptoTrans.getBalance(EthereumAddress.fromHex(publicAddress!)).then((value) => {if(balance != value){
+          setState(() {
+            balance = value;
+          })
+          }});
       return true;
     } else {
       var res = await storage.read(key: "isWallet");
@@ -83,6 +88,7 @@ navigator(String datas){
           return false;
         }
       } else if (res == "true") {
+        print("Dfgdfg");
         privateAddress = await storage.read(key: "privateKey");
         publicAddress = await storage.read(key: "publicKey");
         cryptoTrans.publicAddress = EthereumAddress.fromHex(publicAddress!);

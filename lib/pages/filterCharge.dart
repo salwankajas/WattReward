@@ -44,7 +44,7 @@ class _FilterChargeState extends State<FilterCharge> {
   }
 
   Future<void> _asyncFunction(
-      BuildContext context, datas, time, publicKey, chargeRate) async {
+      BuildContext context, datas, time, publicKey,privateKey, chargeRate) async {
         int perc=0;
     // Simulating some asynchronous operation, e.g., fetching data from an API
     print(selectedIndex);
@@ -124,7 +124,7 @@ class _FilterChargeState extends State<FilterCharge> {
           gravity: ToastGravity.BOTTOM,
           textColor: Colors.white);
     } else {
-      // await cryptoToken.approve("f16d49322270b645b6b25babcc61bd484ac2c04ca898d8fc0015390e3d9e081e",EthereumAddress.fromHex(datas["publicKey"]), costEstimated);
+      await cryptoToken.approve(privateKey,EthereumAddress.fromHex(datas["publicKey"]), costEstimated);
       // var res = await crypto.startCharge(datas["privateKey"], EthereumAddress.fromHex(publicKey), EthereumAddress.fromHex(datas["publicKey"]), widget.slot, chargeRate, time);
       var res = "sd";
       if (res != "s") {
@@ -149,8 +149,7 @@ class _FilterChargeState extends State<FilterCharge> {
                       slot: widget.slot,
                       cs: datas["publicKey"],
                       ev: publicKey,
-                      priv:
-                          "f16d49322270b645b6b25babcc61bd484ac2c04ca898d8fc0015390e3d9e081e",
+                      priv:privateKey,
                       privcs: datas["privateKey"],
                       percLimit: perc,
                     )));
@@ -490,6 +489,7 @@ class _FilterChargeState extends State<FilterCharge> {
                   int chargeRate = 30;
                   int time = 0;
                   String? publicKey = await storage.read(key: "publicKey");
+                  String? privateKey = await storage.read(key: "privateKey");
                   DocumentSnapshot<Object?> data =
                       await readDB(Entity.shop, widget.id);
                   Map<String, dynamic> datas =
@@ -517,7 +517,7 @@ class _FilterChargeState extends State<FilterCharge> {
                         );
                       },
                     );
-                    _asyncFunction(context, datas, time, publicKey, chargeRate)
+                    _asyncFunction(context, datas, time, publicKey,privateKey, chargeRate)
                         .then((_) {
                       // Dismiss the loading dialog after async function completes
                       // Navigator.of(context).pop();

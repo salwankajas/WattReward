@@ -139,6 +139,8 @@ class _SelectSlotState extends State<SelectSlot> {
                 Map<String, dynamic> datas =
                     data!.data() as Map<String, dynamic>;
                 DateTime now = DateTime.now();
+                try{
+
                 if (now.millisecondsSinceEpoch -
                         int.parse(datas["charger"]['${selectedIndex}']
                                 ["timestamp"]
@@ -154,6 +156,15 @@ class _SelectSlotState extends State<SelectSlot> {
                       fontSize: 14,
                       gravity: ToastGravity.BOTTOM,
                       textColor: Colors.white);
+                }
+                }catch(e){
+                  Fluttertoast.showToast(
+                      msg: "Please reconnect plug to ev",
+                      backgroundColor: Colors.grey,
+                      fontSize: 14,
+                      gravity: ToastGravity.BOTTOM,
+                      textColor: Colors.white);
+
                 }
               },
             ),
