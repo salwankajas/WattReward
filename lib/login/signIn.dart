@@ -76,7 +76,7 @@ class SignIn extends StatelessWidget {
                   await addUser(user.additionalUserInfo!.profile!["id"], entity,
                       user.user!.displayName!, user.user!.email!);
                       if(entity.value == "shop"){
-                        Navigator.push(context,MaterialPageRoute(builder: (context) => ShopData(id: user.additionalUserInfo!.profile!["id"])));
+                        Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => ShopData(id: user.additionalUserInfo!.profile!["id"])));
                         return;
                       }
                 }else{
@@ -89,7 +89,7 @@ class SignIn extends StatelessWidget {
                         return;
                   }else{
                     if(data["verified"]){
-                      Navigator.push(context,
+                      Navigator.pushReplacement(context,
                       MaterialPageRoute(builder: (context) => ShopNav()));
                       return;
                     }else{
@@ -110,11 +110,11 @@ class SignIn extends StatelessWidget {
                 // Navigator.push(context,
                 //     MaterialPageRoute(builder: (context) => ShopData()));
                 if (entity.value == "shop") {
-                  Navigator.push(context,
+                  Navigator.pushReplacement(context,
                       MaterialPageRoute(builder: (context) => ShopNav()));
                       return;
                 } else {
-                  Navigator.push(
+                  Navigator.pushReplacement(
                       context, MaterialPageRoute(builder: (context) => Home()));
                       return;
                 }

@@ -141,57 +141,57 @@ class _ShopData extends State<ShopData> {
                                           size: 32,
                                         ))),
                               )))),
-                  Positioned(
-                      width: MediaQuery.of(context).size.width - 100,
-                      top: 5,
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 0),
-                            child: Container(
-                                width: 330,
-                                height: 50,
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 12),
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(8),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.withOpacity(0.3),
-                                        spreadRadius: 2,
-                                        blurRadius: 4,
-                                        offset: Offset(0, 2),
-                                      )
-                                    ],
-                                    border: Border.all(color: Colors.green)),
-                                child: Row(
-                                  children: [
-                                    const Icon(
-                                      Iconsax.search_normal,
-                                      color: Colors.green,
-                                    ),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    Expanded(
-                                      child: TextField(
-                                        textInputAction: TextInputAction.search,
-                                        onSubmitted: (value) {
-                                          // print(response.body);
-                                        },
-                                        keyboardType: TextInputType.text,
-                                        decoration: InputDecoration(
-                                          border: InputBorder.none,
-                                          hintText: 'Search stations',
-                                        ),
-                                        style: TextStyle(color: Colors.black),
-                                        cursorColor: Colors.green,
-                                      ),
-                                    )
-                                  ],
-                                ))),
-                      ))
+                  // Positioned(
+                  //     width: MediaQuery.of(context).size.width - 100,
+                  //     top: 5,
+                  //     child: Align(
+                  //       alignment: Alignment.center,
+                  //       child: Padding(
+                  //           padding: const EdgeInsets.symmetric(horizontal: 0),
+                  //           child: Container(
+                  //               width: 330,
+                  //               height: 50,
+                  //               padding:
+                  //                   const EdgeInsets.symmetric(horizontal: 12),
+                  //               decoration: BoxDecoration(
+                  //                   color: Colors.white,
+                  //                   borderRadius: BorderRadius.circular(8),
+                  //                   boxShadow: [
+                  //                     BoxShadow(
+                  //                       color: Colors.grey.withOpacity(0.3),
+                  //                       spreadRadius: 2,
+                  //                       blurRadius: 4,
+                  //                       offset: Offset(0, 2),
+                  //                     )
+                  //                   ],
+                  //                   border: Border.all(color: Colors.green)),
+                  //               child: Row(
+                  //                 children: [
+                  //                   const Icon(
+                  //                     Iconsax.search_normal,
+                  //                     color: Colors.green,
+                  //                   ),
+                  //                   const SizedBox(
+                  //                     width: 10,
+                  //                   ),
+                  //                   Expanded(
+                  //                     child: TextField(
+                  //                       textInputAction: TextInputAction.search,
+                  //                       onSubmitted: (value) {
+                  //                         // print(response.body);
+                  //                       },
+                  //                       keyboardType: TextInputType.text,
+                  //                       decoration: InputDecoration(
+                  //                         border: InputBorder.none,
+                  //                         hintText: 'Search stations',
+                  //                       ),
+                  //                       style: TextStyle(color: Colors.black),
+                  //                       cursorColor: Colors.green,
+                  //                     ),
+                  //                   )
+                  //                 ],
+                  //               ))),
+                  //     ))
                 ],
               )),
         );

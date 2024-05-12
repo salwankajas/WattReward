@@ -32,6 +32,9 @@ class MyApp extends StatelessWidget {
       firstWidget = Choose();
     }
     return MaterialApp(
+  routes: {
+    '/home': (context) => Home(),
+  },
       title: 'Flutter Map Example',
       home: firstWidget,
       debugShowCheckedModeBanner: false,

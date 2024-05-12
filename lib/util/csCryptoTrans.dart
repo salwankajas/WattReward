@@ -18,7 +18,7 @@ class CsCryptoTrans {
 
   Future<DeployedContract> loadContract() async {
     String abi = await rootBundle.loadString("assets/abi/abiCs.json");
-    String contractAddress = "0xaA9c22584cB9B0767d5D45ED39b8071167FE2f2b";
+    String contractAddress = "0x1909714E6812045b6EAFf379bdE147dcc1E5A32B";
     final contract = DeployedContract(ContractAbi.fromJson(abi, "abs"),
         EthereumAddress.fromHex(contractAddress));
     // if (event == null) {

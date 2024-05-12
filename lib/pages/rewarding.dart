@@ -12,8 +12,32 @@ class Rewarding extends StatelessWidget {
   final textController = TextEditingController();
   late CryptoTrans cryptoTrans;
   final String data;
-  Rewarding({super.key, required String this.data}){
+  Rewarding({super.key, required String this.data}) {
     cryptoTrans = CryptoTrans();
+  }
+
+  Future<void> _asyncFunction(
+      BuildContext context,split) async {
+        var priv = await storage.read(key: "privateKey");
+            int amount = RewardCalculator.calculateRewards(
+                    double.parse(textController.text))
+                .round();
+            // showAlertDialog(context);
+            var res = await cryptoTrans.sendCoinTwo(
+                amount, priv!, EthereumAddress.fromHex(split[0]));
+            print(res);
+            if(res!=""){
+              
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('Success!'),
+    ));
+            }else{
+              
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('error!'),
+    ));
+            }
+
   }
 
   @override
@@ -91,19 +115,41 @@ class Rewarding extends StatelessWidget {
             elevation: 4,
           ),
           child: Text("Reward", style: TextStyle(fontWeight: FontWeight.w700)),
-          onPressed: ()async{
-            var priv = await storage.read(key: "privateKey");
-            int amount = RewardCalculator.calculateRewards(double.parse(textController.text)).round();
-            // showAlertDialog(context);
-            var res = await cryptoTrans.sendCoinTwo(amount, priv!, EthereumAddress.fromHex(split[0]));
-            print(res);
-            Navigator.pop(context);
-            },
+          onPressed: () async {
+            // var priv = await storage.read(key: "privateKey");
+            // int amount = RewardCalculator.calculateRewards(
+            //         double.parse(textController.text))
+            //     .round();
+            // // showAlertDialog(context);
+            // var res = await cryptoTrans.sendCoinTwo(
+            //     amount, priv!, EthereumAddress.fromHex(split[0]));
+            // print(res);
+            // Navigator.pop(context);
+            showDialog(
+              context: context,
+              barrierDismissible: false, // Prevents users from dismissing the dialog by tapping outside
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CircularProgressIndicator(color: Colors.green,),
+                      SizedBox(height: 16),
+                      Text('Transaction under process...'),
+                    ],
+                  ),
+                );
+              },
+            );
+            _asyncFunction(context,split).then((_) {
+              // Dismiss the loading dialog after async function completes
+              Navigator.of(context).pop();
+            });
+          },
         ),
       ]),
     );
   }
 
   // showAlertDialog(BuildContext context) { ... }
-
 }

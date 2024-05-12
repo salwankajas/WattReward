@@ -42,9 +42,27 @@
 				"internalType": "uint256",
 				"name": "duration",
 				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "cost",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "startTime",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "endTime",
+				"type": "uint256"
 			}
 		],
-		"name": "ChargingStarted",
+		"name": "ChargingEnded",
 		"type": "event"
 	},
 	{
@@ -71,26 +89,6 @@
 				"internalType": "uint256",
 				"name": "endTime",
 				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "chargeRate",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "energyTransferred",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "estimatedTime",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "paymentAmount",
-				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -100,7 +98,7 @@
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "csAddress",
+				"name": "evAddress",
 				"type": "address"
 			},
 			{
@@ -110,7 +108,12 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "duration",
+				"name": "chargeRate",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "cost",
 				"type": "uint256"
 			}
 		],
@@ -133,30 +136,6 @@
 			}
 		],
 		"name": "estimateChargingCost",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "csAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "slotIndex",
-				"type": "uint256"
-			}
-		],
-		"name": "getPayment",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -196,28 +175,8 @@
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "evAddress",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "csAddress",
-				"type": "address"
-			},
-			{
 				"internalType": "uint256",
 				"name": "slotIndex",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "chargeRate",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "duration",
 				"type": "uint256"
 			}
 		],

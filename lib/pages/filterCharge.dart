@@ -38,20 +38,131 @@ class _FilterChargeState extends State<FilterCharge> {
   @override
   void initState() {
     // crypto.pu /blicddress = EthereumAddress.fromHex("0xfbe7f0842387a5269bf86e370e4fbc71f542fcf5");
-    cryptoToken.publicAddress = EthereumAddress.fromHex("0xfbe7f0842387a5269bf86e370e4fbc71f542fcf5");
+    cryptoToken.publicAddress =
+        EthereumAddress.fromHex("0xfbe7f0842387a5269bf86e370e4fbc71f542fcf5");
     super.initState();
   }
 
-  Future<void> _asyncFunction(BuildContext context) async {
+  Future<void> _asyncFunction(
+      BuildContext context, datas, time, publicKey, chargeRate) async {
+        int perc=0;
     // Simulating some asynchronous operation, e.g., fetching data from an API
-    await Future.delayed(Duration(seconds: 3));
+    print(selectedIndex);
+    if (selectedIndex == 0) {
+      // print((((int.parse(datas["charger"]['${widget.slot}']["TotalBattery"]) - int.parse(datas["charger"]['${widget.slot}']["currentBattery"]))/chargeRate)*60).ceil());
+      time = ((((int.parse(datas["charger"]['${widget.slot}']["TotalBattery"]) -
+                      int.parse(datas["charger"]['${widget.slot}']
+                          ["currentBattery"])) /
+                  chargeRate) *
+              60)
+          .ceil());
+      perc = 100;
+    } else if (selectedIndex == 1) {
+      if (((int.parse(datas["charger"]['${widget.slot}']["currentBattery"]
+                      .toString()) /
+                  int.parse(datas["charger"]['${widget.slot}']["TotalBattery"]
+                      .toString())) *
+              100) >=
+          int.parse(_controller.text)) {
+        Fluttertoast.showToast(
+            msg: "Percentage less than current",
+            backgroundColor: Colors.grey,
+            fontSize: 14,
+            gravity: ToastGravity.BOTTOM,
+            textColor: Colors.white);
+        return;
+      } else {
+        var perwatt =
+            int.parse(datas["charger"]['${widget.slot}']["TotalBattery"]) *
+                (int.parse(_controller.text) / 100);
+        perc = int.parse(_controller.text);
+        // print((((perwatt - int.parse(datas["charger"]['${widget.slot}']["currentBattery"]))/chargeRate)*60).ceil());
+        time = ((((perwatt -
+                        int.parse(datas["charger"]['${widget.slot}']
+                            ["currentBattery"])) /
+                    chargeRate) *
+                60)
+            .ceil());
+      }
+    } else if (selectedIndex == 2) {
+      if (int.parse(_controller1.text) >
+          ((((int.parse(datas["charger"]['${widget.slot}']["TotalBattery"]) -
+                          int.parse(datas["charger"]['${widget.slot}']
+                              ["currentBattery"])) /
+                      chargeRate) *
+                  60)
+              .ceil())) {
+        time =
+            ((((int.parse(datas["charger"]['${widget.slot}']["TotalBattery"]) -
+                            int.parse(datas["charger"]['${widget.slot}']
+                                ["currentBattery"])) /
+                        chargeRate) *
+                    60)
+                .ceil());
+        perc = 100;
+      } else {
+        time = int.parse(_controller1.text);
+        perc = (((int.parse(datas["charger"]['${widget.slot}']["TotalBattery"]) -
+                            int.parse(datas["charger"]['${widget.slot}']
+                                ["currentBattery"]))/int.parse(datas["charger"]['${widget.slot}']["TotalBattery"]))*100).toInt();
+      }
+      // print(await crypto.getBalance(EthereumAddress.fromHex("0xfbe7f0842387a5269bf86e370e4fbc71f542fcf5")));
+      // print(await crypto.startCharge("f16d49322270b645b6b25babcc61bd484ac2c04ca898d8fc0015390e3d9e081e",EthereumAddress.fromHex("0xfbe7f0842387a5269bf86e370e4fbc71f542fcf5"),EthereumAddress.fromHex("0x60706846c7bd6dc4679c388944421a053d3e129b"),0,5,1));
+      // print(await crypto.transfer("75464c7931cca77018340d553d53f458d180e350b471c4209c3007f53572185b",EthereumAddress.fromHex("0x749c62e9ff5d3f856c398d0aea33e42674d737d9"),EthereumAddress.fromHex("0x60706846c7bd6dc4679c388944421a053d3e129b"),50));
+    }
+    int costEstimated =
+        await crypto.estimateChargingCost((chargeRate / 60).ceil(), time);
+        print(costEstimated);
+    int balance = await cryptoToken.getBalance(EthereumAddress.fromHex(publicKey!));
+        print("balance "+balance.toString());
+    if (balance <
+        costEstimated) {
+      Fluttertoast.showToast(
+          msg: "insufficient balance",
+          backgroundColor: Colors.grey,
+          fontSize: 14,
+          gravity: ToastGravity.BOTTOM,
+          textColor: Colors.white);
+    } else {
+      // await cryptoToken.approve("f16d49322270b645b6b25babcc61bd484ac2c04ca898d8fc0015390e3d9e081e",EthereumAddress.fromHex(datas["publicKey"]), costEstimated);
+      // var res = await crypto.startCharge(datas["privateKey"], EthereumAddress.fromHex(publicKey), EthereumAddress.fromHex(datas["publicKey"]), widget.slot, chargeRate, time);
+      var res = "sd";
+      print(res);
+      if (res != "s") {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Success!'),
+        ));
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ChargingScreen(
+                      time: time,
+                      chargeRate: chargeRate,
+                      fees: costEstimated,
+                      percentage: ((int.parse(datas["charger"]['${widget.slot}']
+                                          ["currentBattery"]
+                                      .toString()) /
+                                  int.parse(datas["charger"]['${widget.slot}']
+                                          ["TotalBattery"]
+                                      .toString())) *
+                              100)
+                          .toInt(),
+                      slot: widget.slot,
+                      cs: datas["publicKey"],
+                      ev: publicKey,
+                      priv:
+                          "f16d49322270b645b6b25babcc61bd484ac2c04ca898d8fc0015390e3d9e081e",
+                      privcs: datas["privateKey"],
+                      percLimit: perc,
+                    )));
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('error!')));
+      }
+    }
     // Once the operation is complete, show success message
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('Success!'),
-    ));
   }
-  
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -377,30 +488,8 @@ class _FilterChargeState extends State<FilterCharge> {
                 child: Text("Start Charging",
                     style: TextStyle(fontWeight: FontWeight.w700)),
                 onPressed: () async {
-                  showDialog(
-              context: context,
-              barrierDismissible: false, // Prevents users from dismissing the dialog by tapping outside
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      CircularProgressIndicator(),
-                      SizedBox(height: 16),
-                      Text('Please wait...'),
-                    ],
-                  ),
-                );
-              },
-            );
-            _asyncFunction(context).then((_) {
-              // Dismiss the loading dialog after async function completes
-              Navigator.of(context).pop();
-            });
-
-
                   int chargeRate = 30;
-                  int time=0;
+                  int time = 0;
                   String? publicKey = await storage.read(key: "publicKey");
                   DocumentSnapshot<Object?> data =
                       await readDB(Entity.shop, widget.id);
@@ -412,50 +501,72 @@ class _FilterChargeState extends State<FilterCharge> {
                                   ["timestamp"]
                               .toString()) <
                       120000) {
-                    print(selectedIndex);
-                    if(selectedIndex == 0){
-                      // print((((int.parse(datas["charger"]['${widget.slot}']["TotalBattery"]) - int.parse(datas["charger"]['${widget.slot}']["currentBattery"]))/chargeRate)*60).ceil());
-                      time = ((((int.parse(datas["charger"]['${widget.slot}']["TotalBattery"]) - int.parse(datas["charger"]['${widget.slot}']["currentBattery"]))/chargeRate)*60).ceil());
-                    }else if(selectedIndex == 1) {
-                      if(((int.parse(datas["charger"]['${widget.slot}']["currentBattery"].toString())/int.parse(datas["charger"]['${widget.slot}']
-                                  ["TotalBattery"].toString()))*100)>= int.parse(_controller.text)){
-                                    Fluttertoast.showToast(
-                        msg: "Percentage less than current",
-                        backgroundColor: Colors.grey,
-                        fontSize: 14,
-                        gravity: ToastGravity.BOTTOM,
-                        textColor: Colors.white);
-                        return;
-                      }else{
-                        var perwatt = int.parse(datas["charger"]['${widget.slot}']["TotalBattery"]) * (int.parse(_controller.text)/100);
-                        // print((((perwatt - int.parse(datas["charger"]['${widget.slot}']["currentBattery"]))/chargeRate)*60).ceil());
-                        time = ((((perwatt - int.parse(datas["charger"]['${widget.slot}']["currentBattery"]))/chargeRate)*60).ceil());
-                      }
-                    }else if(selectedIndex == 2){
-                      if(int.parse(_controller1.text) > ((((int.parse(datas["charger"]['${widget.slot}']["TotalBattery"]) - int.parse(datas["charger"]['${widget.slot}']["currentBattery"]))/chargeRate)*60).ceil())){
-                        time = ((((int.parse(datas["charger"]['${widget.slot}']["TotalBattery"]) - int.parse(datas["charger"]['${widget.slot}']["currentBattery"]))/chargeRate)*60).ceil());
-                      }else{
-                        time = int.parse(_controller1.text);
-                      }
-                      // print(await crypto.getBalance(EthereumAddress.fromHex("0xfbe7f0842387a5269bf86e370e4fbc71f542fcf5")));
-                      // print(await crypto.startCharge("f16d49322270b645b6b25babcc61bd484ac2c04ca898d8fc0015390e3d9e081e",EthereumAddress.fromHex("0xfbe7f0842387a5269bf86e370e4fbc71f542fcf5"),EthereumAddress.fromHex("0x60706846c7bd6dc4679c388944421a053d3e129b"),0,5,1));
-                      // print(await crypto.transfer("75464c7931cca77018340d553d53f458d180e350b471c4209c3007f53572185b",EthereumAddress.fromHex("0x749c62e9ff5d3f856c398d0aea33e42674d737d9"),EthereumAddress.fromHex("0x60706846c7bd6dc4679c388944421a053d3e129b"),50));
-                    }
-                      int costEstimated = await crypto.estimateChargingCost((chargeRate/60).ceil(),time);
-                      if((await cryptoToken.getBalance(EthereumAddress.fromHex(publicKey!))) < costEstimated){
-                        Fluttertoast.showToast(
-                        msg: "insufficient balance",
-                        backgroundColor: Colors.grey,
-                        fontSize: 14,
-                        gravity: ToastGravity.BOTTOM,
-                        textColor: Colors.white);
-                      }else{
-                        await cryptoToken.approve("f16d49322270b645b6b25babcc61bd484ac2c04ca898d8fc0015390e3d9e081e",EthereumAddress.fromHex(datas["publicKey"]), costEstimated);
-                        print(await crypto.startCharge(datas["privateKey"], EthereumAddress.fromHex(publicKey), EthereumAddress.fromHex(datas["publicKey"]), widget.slot, chargeRate, time));
-                        Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => ChargingScreen(time: time,chargeRate: chargeRate,fees: costEstimated,percentage: ((int.parse(datas["charger"]['${widget.slot}']["currentBattery"].toString())/int.parse(datas["charger"]['${widget.slot}']
-                                  ["TotalBattery"].toString()))*100).toInt(),slot:widget.slot,cs:datas["publicKey"],ev: publicKey,priv: "f16d49322270b645b6b25babcc61bd484ac2c04ca898d8fc0015390e3d9e081e",privcs: datas["privateKey"],)));
-                      }
+                    showDialog(
+                      context: context,
+                      barrierDismissible:
+                          false, // Prevents users from dismissing the dialog by tapping outside
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CircularProgressIndicator(color: Colors.green,),
+                              SizedBox(height: 16),
+                              Text('Please wait...'),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                    _asyncFunction(context, datas, time, publicKey, chargeRate)
+                        .then((_) {
+                      // Dismiss the loading dialog after async function completes
+                      // Navigator.of(context).pop();
+                    });
+                    // print(selectedIndex);
+                    // if(selectedIndex == 0){
+                    //   // print((((int.parse(datas["charger"]['${widget.slot}']["TotalBattery"]) - int.parse(datas["charger"]['${widget.slot}']["currentBattery"]))/chargeRate)*60).ceil());
+                    //   time = ((((int.parse(datas["charger"]['${widget.slot}']["TotalBattery"]) - int.parse(datas["charger"]['${widget.slot}']["currentBattery"]))/chargeRate)*60).ceil());
+                    // }else if(selectedIndex == 1) {
+                    //   if(((int.parse(datas["charger"]['${widget.slot}']["currentBattery"].toString())/int.parse(datas["charger"]['${widget.slot}']
+                    //               ["TotalBattery"].toString()))*100)>= int.parse(_controller.text)){
+                    //                 Fluttertoast.showToast(
+                    //     msg: "Percentage less than current",
+                    //     backgroundColor: Colors.grey,
+                    //     fontSize: 14,
+                    //     gravity: ToastGravity.BOTTOM,
+                    //     textColor: Colors.white);
+                    //     return;
+                    //   }else{
+                    //     var perwatt = int.parse(datas["charger"]['${widget.slot}']["TotalBattery"]) * (int.parse(_controller.text)/100);
+                    //     // print((((perwatt - int.parse(datas["charger"]['${widget.slot}']["currentBattery"]))/chargeRate)*60).ceil());
+                    //     time = ((((perwatt - int.parse(datas["charger"]['${widget.slot}']["currentBattery"]))/chargeRate)*60).ceil());
+                    //   }
+                    // }else if(selectedIndex == 2){
+                    //   if(int.parse(_controller1.text) > ((((int.parse(datas["charger"]['${widget.slot}']["TotalBattery"]) - int.parse(datas["charger"]['${widget.slot}']["currentBattery"]))/chargeRate)*60).ceil())){
+                    //     time = ((((int.parse(datas["charger"]['${widget.slot}']["TotalBattery"]) - int.parse(datas["charger"]['${widget.slot}']["currentBattery"]))/chargeRate)*60).ceil());
+                    //   }else{
+                    //     time = int.parse(_controller1.text);
+                    //   }
+                    //   // print(await crypto.getBalance(EthereumAddress.fromHex("0xfbe7f0842387a5269bf86e370e4fbc71f542fcf5")));
+                    //   // print(await crypto.startCharge("f16d49322270b645b6b25babcc61bd484ac2c04ca898d8fc0015390e3d9e081e",EthereumAddress.fromHex("0xfbe7f0842387a5269bf86e370e4fbc71f542fcf5"),EthereumAddress.fromHex("0x60706846c7bd6dc4679c388944421a053d3e129b"),0,5,1));
+                    //   // print(await crypto.transfer("75464c7931cca77018340d553d53f458d180e350b471c4209c3007f53572185b",EthereumAddress.fromHex("0x749c62e9ff5d3f856c398d0aea33e42674d737d9"),EthereumAddress.fromHex("0x60706846c7bd6dc4679c388944421a053d3e129b"),50));
+                    // }
+                    //   int costEstimated = await crypto.estimateChargingCost((chargeRate/60).ceil(),time);
+                    //   if((await cryptoToken.getBalance(EthereumAddress.fromHex(publicKey!))) < costEstimated){
+                    //     Fluttertoast.showToast(
+                    //     msg: "insufficient balance",
+                    //     backgroundColor: Colors.grey,
+                    //     fontSize: 14,
+                    //     gravity: ToastGravity.BOTTOM,
+                    //     textColor: Colors.white);
+                    //   }else{
+                    //     await cryptoToken.approve("f16d49322270b645b6b25babcc61bd484ac2c04ca898d8fc0015390e3d9e081e",EthereumAddress.fromHex(datas["publicKey"]), costEstimated);
+                    //     print(await crypto.startCharge(datas["privateKey"], EthereumAddress.fromHex(publicKey), EthereumAddress.fromHex(datas["publicKey"]), widget.slot, chargeRate, time));
+                    //     Navigator.pushReplacement(context,
+                    //   MaterialPageRoute(builder: (context) => ChargingScreen(time: time,chargeRate: chargeRate,fees: costEstimated,percentage: ((int.parse(datas["charger"]['${widget.slot}']["currentBattery"].toString())/int.parse(datas["charger"]['${widget.slot}']
+                    //               ["TotalBattery"].toString()))*100).toInt(),slot:widget.slot,cs:datas["publicKey"],ev: publicKey,priv: "f16d49322270b645b6b25babcc61bd484ac2c04ca898d8fc0015390e3d9e081e",privcs: datas["privateKey"],)));
+                    //   }
                     // print(await crypto.transfer("75464c7931cca77018340d553d53f458d180e350b471c4209c3007f53572185b",1, 1));
                     // print(await crypto.getBalance(EthereumAddress.fromHex("0xfbe7f0842387a5269bf86e370e4fbc71f542fcf5")));
                   } else {
@@ -467,8 +578,6 @@ class _FilterChargeState extends State<FilterCharge> {
                         gravity: ToastGravity.BOTTOM,
                         textColor: Colors.white);
                   }
-
-
                 },
               ),
               // ),

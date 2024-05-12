@@ -311,89 +311,89 @@ class _Maps extends State<Maps> with AutomaticKeepAliveClientMixin<Maps> {
                             size: 26,
                           )),
                         )))),
-            Positioned(
-                width: MediaQuery.of(context).size.width,
-                top: 50,
-                child: Align(
-                  alignment: Alignment.center,
-                  child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 0),
-                      child: Container(
-                          width: 330,
-                          height: 50,
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.3),
-                                  spreadRadius: 2,
-                                  blurRadius: 4,
-                                  offset: Offset(0, 2),
-                                )
-                              ],
-                              border: Border.all(color: Colors.green)),
-                          child: Row(
-                            children: [
-                              const Icon(
-                                Iconsax.search_normal,
-                                color: Colors.green,
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Expanded(
-                                child: TextField(
-                                  textInputAction: TextInputAction.search,
-                                  onSubmitted: (value) async {
-                                    var v1 = 11.198752;
-                                    var v2 = 76.260167;
-                                    var v3 = 11.200322;
-                                    var v4 = 76.262337;
+            // Positioned(
+            //     width: MediaQuery.of(context).size.width,
+            //     top: 50,
+            //     child: Align(
+            //       alignment: Alignment.center,
+            //       child: Padding(
+            //           padding: const EdgeInsets.symmetric(horizontal: 0),
+            //           child: Container(
+            //               width: 330,
+            //               height: 50,
+            //               padding: const EdgeInsets.symmetric(horizontal: 12),
+            //               decoration: BoxDecoration(
+            //                   color: Colors.white,
+            //                   borderRadius: BorderRadius.circular(8),
+            //                   boxShadow: [
+            //                     BoxShadow(
+            //                       color: Colors.grey.withOpacity(0.3),
+            //                       spreadRadius: 2,
+            //                       blurRadius: 4,
+            //                       offset: Offset(0, 2),
+            //                     )
+            //                   ],
+            //                   border: Border.all(color: Colors.green)),
+            //               child: Row(
+            //                 children: [
+            //                   const Icon(
+            //                     Iconsax.search_normal,
+            //                     color: Colors.green,
+            //                   ),
+            //                   const SizedBox(
+            //                     width: 10,
+            //                   ),
+            //                   Expanded(
+            //                     child: TextField(
+            //                       textInputAction: TextInputAction.search,
+            //                       onSubmitted: (value) async {
+            //                         var v1 = 11.198752;
+            //                         var v2 = 76.260167;
+            //                         var v3 = 11.200322;
+            //                         var v4 = 76.262337;
 
-                                    var url = Uri.parse(
-                                        "http://router.project-osrm.org/route/v1/driving/$v2,$v1;$v4,$v3?steps=true&annotations=true&geometries=geojson&overview=full");
-                                    // var url = Uri.parse("https://routing.openstreetmap.de/routed-car/route/v1/driving/$v2,$v1;$v4,$v3?overview=false&geometries=geojson&steps=true&hints=NwaPgcdQFIMrAAAAAAAAAAABAACTAAAAXcigQgAAAACExfJDPBOKQysAAAAAAAAAAAEAAJMAAAAmOwAAvGaWBNaZlgC8ZpYE1pmWABYAnwBH1g1v%3BueiRiMHokYgFAAAAAQAAAAUAAAAEAAAA0JInQaBAmD8WiA1BIKflQAUAAAABAAAABQAAAAQAAAAmOwAAoF2WBAJolgDZXZYEtWeWAAEAXwNH1g1v");
-                                    var response = await http.get(url);
-                                    print(response.body);
-                                    setState(() {
-                                      routePoints = [];
-                                      var ruter =
-                                          jsonDecode(response.body)['routes'][0]
-                                              ['geometry']['coordinates'];
-                                      print(ruter);
-                                      for (int i = 0; i < ruter.length; i++) {
-                                        var rep = ruter[i].toString();
-                                        rep = rep.replaceAll("[", "");
-                                        rep = rep.replaceAll("]", "");
-                                        var lat1 = rep.split(", ");
-                                        // print(lat1);
-                                        // var long1 = rep.split(',');
-                                        routePoints.add(LatLng(
-                                            double.parse(lat1[1]),
-                                            double.parse(lat1[0])));
-                                      }
-                                      // print(response);
-                                      // print(ruter);
-                                      _mapController.move(routePoints[0], 18.0);
-                                      print(routePoints);
-                                    });
+            //                         var url = Uri.parse(
+            //                             "http://router.project-osrm.org/route/v1/driving/$v2,$v1;$v4,$v3?steps=true&annotations=true&geometries=geojson&overview=full");
+            //                         // var url = Uri.parse("https://routing.openstreetmap.de/routed-car/route/v1/driving/$v2,$v1;$v4,$v3?overview=false&geometries=geojson&steps=true&hints=NwaPgcdQFIMrAAAAAAAAAAABAACTAAAAXcigQgAAAACExfJDPBOKQysAAAAAAAAAAAEAAJMAAAAmOwAAvGaWBNaZlgC8ZpYE1pmWABYAnwBH1g1v%3BueiRiMHokYgFAAAAAQAAAAUAAAAEAAAA0JInQaBAmD8WiA1BIKflQAUAAAABAAAABQAAAAQAAAAmOwAAoF2WBAJolgDZXZYEtWeWAAEAXwNH1g1v");
+            //                         var response = await http.get(url);
+            //                         print(response.body);
+            //                         setState(() {
+            //                           routePoints = [];
+            //                           var ruter =
+            //                               jsonDecode(response.body)['routes'][0]
+            //                                   ['geometry']['coordinates'];
+            //                           print(ruter);
+            //                           for (int i = 0; i < ruter.length; i++) {
+            //                             var rep = ruter[i].toString();
+            //                             rep = rep.replaceAll("[", "");
+            //                             rep = rep.replaceAll("]", "");
+            //                             var lat1 = rep.split(", ");
+            //                             // print(lat1);
+            //                             // var long1 = rep.split(',');
+            //                             routePoints.add(LatLng(
+            //                                 double.parse(lat1[1]),
+            //                                 double.parse(lat1[0])));
+            //                           }
+            //                           // print(response);
+            //                           // print(ruter);
+            //                           _mapController.move(routePoints[0], 18.0);
+            //                           print(routePoints);
+            //                         });
 
-                                    // print(response.body);
-                                  },
-                                  keyboardType: TextInputType.text,
-                                  decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: 'Search stations',
-                                  ),
-                                  style: TextStyle(color: Colors.black),
-                                  cursorColor: Colors.green,
-                                ),
-                              )
-                            ],
-                          ))),
-                )),
+            //                         // print(response.body);
+            //                       },
+            //                       keyboardType: TextInputType.text,
+            //                       decoration: InputDecoration(
+            //                         border: InputBorder.none,
+            //                         hintText: 'Search stations',
+            //                       ),
+            //                       style: TextStyle(color: Colors.black),
+            //                       cursorColor: Colors.green,
+            //                     ),
+            //                   )
+            //                 ],
+            //               ))),
+            //     )),
           ],
         ));
   }
