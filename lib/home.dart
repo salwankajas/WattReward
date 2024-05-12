@@ -107,7 +107,7 @@ class _Navstate extends State<Home> {
         children: <Widget>[
           Maps(),
           Wallet(),
-          Text("sdfsdf"),
+          // Text("sdfsdf"),
           Acc(),
         ],
         onPageChanged: (pages) {
@@ -133,8 +133,8 @@ class _Navstate extends State<Home> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Iconsax.home), label: "Home"),
           BottomNavigationBarItem(icon: Icon(Iconsax.wallet), label: "Wallet"),
-          BottomNavigationBarItem(
-              icon: Icon(Iconsax.note), label: "Transaction"),
+          // BottomNavigationBarItem(
+          //     icon: Icon(Iconsax.note), label: "Transaction"),
           BottomNavigationBarItem(
               icon: Icon(Iconsax.profile_2user), label: "Account",
               )

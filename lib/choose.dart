@@ -39,7 +39,7 @@ class Choose extends StatelessWidget {
           ),
           child: Text("Shop", style: TextStyle(fontWeight: FontWeight.w700)),
           onPressed: () => {
-            Navigator.pushReplacement(
+            Navigator.push(
                 context, MaterialPageRoute(builder: (context) => SignIn(entity: Entity.shop)))
           },
         ),
@@ -60,7 +60,7 @@ class Choose extends StatelessWidget {
           ),
           child: Text("User", style: TextStyle(fontWeight: FontWeight.w700)),
           onPressed: () => {
-            Navigator.pushReplacement(
+            Navigator.push(
                 context, MaterialPageRoute(builder: (context) => SignIn(entity: Entity.user)))
           },
         ),

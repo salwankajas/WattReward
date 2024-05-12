@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:ev/util/csCryptoTrans.dart';
 import 'package:ev/util/CryptoTrans.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:web3dart/web3dart.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
@@ -99,7 +100,7 @@ class ChargingBody extends StatefulWidget {
 }
 
 class _ChargingBody extends State<ChargingBody> {
-  final socket = IO.io('http://192.168.1.6:5002', <String, dynamic>{
+  final socket = IO.io('http://192.168.1.3:5002', <String, dynamic>{
     'transports': ['websocket'],
     'autoConnect': false,
   });
@@ -107,6 +108,9 @@ class _ChargingBody extends State<ChargingBody> {
   double fee = 0;
   late BuildContext contexts;
   bool _showProgressDialog = true;
+  bool _isTransaction=true;
+  String transaction="";
+  String head = "Stopping Charging";
 
   @override
   void dispose() {
@@ -146,6 +150,13 @@ class _ChargingBody extends State<ChargingBody> {
       socket.emit('message', jsonMessage);
     });
     super.initState();
+    // socket.on(
+    //     "transaction",
+    //     (data){
+    //       print("check..........");
+
+    //     } 
+    //         );
     socket.on(
         "stop",
         (data) =>
@@ -154,17 +165,38 @@ class _ChargingBody extends State<ChargingBody> {
               context: contexts,
               barrierDismissible:
                   false, // Prevents users from dismissing the dialog by tapping outside
-              builder: (BuildContext context) {
-                return AlertDialog(
+              builder:(context) {
+      return StatefulBuilder(builder: (BuildContext context,
+          StateSetter setStates /*You can rename this!*/) {
+            socket.on(
+        "transaction",
+        (data){
+          _isTransaction = false;
+          transaction = data;
+          head = "Charging stopped";
+          setStates(() {
+          });
+        } 
+            );
+                return AlertDialog(     
                   content: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       // CircularProgressIndicator(),
                       Text(
-                        'Charging Finished...',
+                        head,
                         style: TextStyle(fontSize: 18),
                       ),
-                      SizedBox(height: 32),
+                      SizedBox(height: 24),
+                      SizedBox(height: 24),
+                      _isTransaction? 
+                      Text(
+                        'Wait for the transaction',
+                        style: TextStyle(fontSize: 12),
+                      )
+                      :
+                      Column(
+                        children: [
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
@@ -179,11 +211,36 @@ class _ChargingBody extends State<ChargingBody> {
                           shadowColor: Color.fromARGB(255, 26, 255, 0),
                           elevation: 4,
                         ),
-                        child: Text("Ok",
+                        child: Text("Transaction",
+                            style: TextStyle(fontWeight: FontWeight.w700)),
+                        onPressed: () async{
+                           final Uri url = Uri.parse('https://www.oklink.com/amoy/tx/${transaction}');
+ if (!await launchUrl(url)) {
+      throw Exception('Could not launch $url');
+ }
+
+                          // Navigator.pop(context);
+                        },
+                      ),
+                      SizedBox(height: 18),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                          minimumSize: Size(280, 50),
+                          textStyle: TextStyle(fontSize: 16),
+                          // primary: Color.fromARGB(255, 99, 225, 103),
+                          // onPrimary: Colors.white,
+                          backgroundColor: Color.fromARGB(255, 99, 225, 103),
+                          foregroundColor: Colors.white,
+                          shadowColor: Color.fromARGB(255, 26, 255, 0),
+                          elevation: 4,
+                        ),
+                        child: Text("Close",
                             style: TextStyle(fontWeight: FontWeight.w700)),
                         onPressed: () {
                           socket.close();
-                          print("DFgr");
                           socket.clearListeners();
                           Navigator.pushReplacementNamed(context, '/home');
                           // Navigator.pop(context);
@@ -192,9 +249,10 @@ class _ChargingBody extends State<ChargingBody> {
 
                       // Text('Please wait...'),
                     ],
-                  ),
+                  ),])
                 );
-              },
+              }
+              );}
             )
         // Navigator.pop(contexts);
         // })

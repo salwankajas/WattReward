@@ -86,8 +86,11 @@ navigator(String datas){
         privateAddress = await storage.read(key: "privateKey");
         publicAddress = await storage.read(key: "publicKey");
         cryptoTrans.publicAddress = EthereumAddress.fromHex(publicAddress!);
-        balance = await cryptoTrans
-              .getBalance(EthereumAddress.fromHex(publicAddress!));
+        cryptoTrans.getBalance(EthereumAddress.fromHex(publicAddress!)).then((value) => {if(balance != value){
+          setState(() {
+            balance = value;
+          })
+          }});
         return true;
       } else {
         return false;
@@ -205,6 +208,7 @@ navigator(String datas){
                                 privateAddress = privateKey.toString();
                                 publicAddress = publicKey.toString();
                                 // addUserDetails(privateKey, publicKey);
+                                isWallet = true;
                                 await storage.write(
                                     key: "isWallet", value: "true");
                                 await storage.write(

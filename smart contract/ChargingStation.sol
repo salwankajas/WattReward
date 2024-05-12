@@ -14,18 +14,20 @@ contract ChargingStation {
     uint public unitRate;
 
     mapping(address => mapping(uint256 => ChargingSlot)) public chargingSlots;
+    mapping(address => bool) public chargingStations;
+
 
     constructor(uint _unitRate) {
         owner = msg.sender;
         unitRate = _unitRate;
     }
 
-
-    // Modifier to ensure only CS or EV can call specific functions
-    modifier onlyParties(address csAddress) {
-        require(msg.sender == csAddress, "Only CS or EV can call this function");
+    // Modifier to check if the caller is a registered charging station
+    modifier onlyChargingStation() {
+        require(chargingStations[msg.sender], "Caller is not a registered charging station");
         _;
     }
+
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Ownable: caller is not the owner");
@@ -36,17 +38,21 @@ contract ChargingStation {
     function setUnitRate(uint _unitRate) public onlyOwner {
         unitRate = _unitRate;
     }
+    // Function to add a charging station
+    function addChargingStation(address stationAddress) public onlyOwner {
+        chargingStations[stationAddress] = true;
+    }
 
     // Function called by CS to start charging process for a specific slot
-    function startChargingApp(uint256 slotIndex) external onlyParties(msg.sender){
+    function startChargingApp(uint256 slotIndex,uint256 startTime) external onlyChargingStation(){
         require(chargingSlots[msg.sender][slotIndex].startTime == 0, "Charging has already started for this slot");
-        chargingSlots[msg.sender][slotIndex] = ChargingSlot(block.timestamp, 0);
+        chargingSlots[msg.sender][slotIndex] = ChargingSlot(startTime, 0);
 
     }
 
     // Function called by CS to end charging process for a specific slot
-    function endCharging(address evAddress, uint256 slotIndex,uint256 chargeRate,uint256 cost) external onlyParties(msg.sender){
-        chargingSlots[msg.sender][slotIndex].endTime = block.timestamp;
+    function endCharging(address evAddress, uint256 slotIndex,uint256 chargeRate,uint256 cost,uint256 endTime) external onlyChargingStation(){
+        chargingSlots[msg.sender][slotIndex].endTime = endTime;
         emit ChargingEnded(evAddress, msg.sender, slotIndex, chargeRate, chargingSlots[msg.sender][slotIndex].endTime - chargingSlots[msg.sender][slotIndex].startTime,cost,chargingSlots[msg.sender][slotIndex].startTime,chargingSlots[msg.sender][slotIndex].endTime);
         chargingSlots[msg.sender][slotIndex].startTime = 0;
     }

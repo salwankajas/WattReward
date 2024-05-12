@@ -86,8 +86,12 @@ class _Wallet extends State<Wallet> with AutomaticKeepAliveClientMixin<Wallet> {
         publicAddress = await storage.read(key: "publicKey");
         name = await storage.read(key: "name");
         cryptoTrans.publicAddress = EthereumAddress.fromHex(publicAddress!);
-        balance = await cryptoTrans
-              .getBalance(EthereumAddress.fromHex(publicAddress!));
+
+        cryptoTrans.getBalance(EthereumAddress.fromHex(publicAddress!)).then((value) => {if(balance != value){
+          setState(() {
+            balance = value;
+          })
+        }});
         return true;
       } else {
         return false;
@@ -131,43 +135,43 @@ class _Wallet extends State<Wallet> with AutomaticKeepAliveClientMixin<Wallet> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      GestureDetector(
-                          onTapDown: (e) {
-                            setState(() {
-                              clr = Colors.green;
-                            });
-                            Future.delayed(const Duration(milliseconds: 200))
-                                .then((val) {
-                              setState(() {
-                                clr = Colors.black;
-                              });
-                            });
-                          },
-                          onTap: () async {
-                            balance = await cryptoTrans.getBalance(
-                                EthereumAddress.fromHex(publicAddress!));
-                            setState(() {});
-                          },
-                          child: Container(
-                              width: 60,
-                              height: 60,
-                              color: Colors.transparent,
-                              alignment: Alignment.center,
-                              child: Column(
-                                children: [
-                                  Icon(
-                                    Iconsax.wallet,
-                                    color: clr,
-                                  ),
-                                  Text(
-                                    "Buy",
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                        color: clr),
-                                  ),
-                                ],
-                              ))),
+                      // GestureDetector(
+                      //     onTapDown: (e) {
+                      //       setState(() {
+                      //         clr = Colors.green;
+                      //       });
+                      //       Future.delayed(const Duration(milliseconds: 200))
+                      //           .then((val) {
+                      //         setState(() {
+                      //           clr = Colors.black;
+                      //         });
+                      //       });
+                      //     },
+                      //     onTap: () async {
+                      //       balance = await cryptoTrans.getBalance(
+                      //           EthereumAddress.fromHex(publicAddress!));
+                      //       setState(() {});
+                      //     },
+                      //     child: Container(
+                      //         width: 60,
+                      //         height: 60,
+                      //         color: Colors.transparent,
+                      //         alignment: Alignment.center,
+                      //         child: Column(
+                      //           children: [
+                      //             Icon(
+                      //               Iconsax.wallet,
+                      //               color: clr,
+                      //             ),
+                      //             Text(
+                      //               "Buy",
+                      //               style: TextStyle(
+                      //                   fontSize: 12,
+                      //                   fontWeight: FontWeight.w600,
+                      //                   color: clr),
+                      //             ),
+                      //           ],
+                      //         ))),
                       SizedBox(
                         width: 10,
                       ),
